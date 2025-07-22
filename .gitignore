@@ -1,0 +1,49 @@
+# OS-specific
+.DS_Store
+Thumbs.db
+
+# Logs
+*.log
+
+# Env & config
+.env
+.env.local
+.env.*.local
+
+# Virtual environments (Python)
+venv/
+.venv/
+env/
+
+# Python cache
+__pycache__/
+*.py[cod]
+*.pyo
+
+# Node modules (frontend)
+frontend/node_modules/
+
+# Frontend build output
+frontend/.next/
+frontend/out/
+
+# Python build
+*.egg-info/
+dist/
+build/
+
+# Alembic migration cache
+backend/alembic/versions/*.pyc
+
+# Docker junk (optional)
+**/docker-compose.override.yml
+**/.docker/
+
+# Editor / IDE
+.vscode/
+.idea/
+*.swp
+
+# Optional: compiled DBs or scratch files
+*.sqlite3
+*.db

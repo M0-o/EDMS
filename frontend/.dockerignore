@@ -1,0 +1,18 @@
+# Node modules & lockfiles
+node_modules
+npm-debug.log
+yarn-error.log
+pnpm-lock.yaml
+
+# Build output
+.next
+out
+
+# Env files
+.env*
+!.env.example
+
+# Git and system files
+.git
+.gitignore
+.DS_Store

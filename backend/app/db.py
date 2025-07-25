@@ -5,7 +5,6 @@ from sqlalchemy.exc import OperationalError
 import time
 
 DATABASE_URL = os.getenv("DATABASE_URL")
-print(DATABASE_URL)
 max_tries = 15
 wait_seconds = 10
 

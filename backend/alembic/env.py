@@ -1,13 +1,11 @@
 from logging.config import fileConfig
-
 from sqlalchemy import engine_from_config
 from sqlalchemy import pool
-
 from alembic import context
-
 import sys
 import os
 from dotenv import load_dotenv
+
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
 
 dotenv_path = os.path.abspath(os.path.join(os.path.dirname(__file__), '..', '..', '.env'))
@@ -30,7 +28,11 @@ if config.config_file_name is not None:
 # from myapp import mymodel
 # target_metadata = mymodel.Base.metadata
 from app.db import Base
-from app.models.diploma import Diploma  # Make sure your models are imported
+from app.models.user import User        # No dependencies
+from app.models.student import Student  # No dependencies  
+from app.models.diploma import Diploma  # Depends on Student
+from app.models.document import DiplomaFile  # Depends on Diploma
+from app.models.diploma_status import DiplomaStatus  # Depends on Diploma  # Make sure your models are imported
 target_metadata = Base.metadata
 
 # other values from the config, defined by the needs of env.py,

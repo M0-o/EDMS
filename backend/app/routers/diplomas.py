@@ -2,7 +2,7 @@ from fastapi import APIRouter, Depends
 from sqlalchemy.orm import Session
 from app.db import SessionLocal
 from app.models.diploma import Diploma
-from app.schemas import DiplomaCreate, DiplomaOut
+from app.schemas.diploma import DiplomaCreate, DiplomaOut
 
 router = APIRouter()
 
@@ -15,7 +15,7 @@ def get_db():
 
 @router.post("/", response_model=DiplomaOut)
 def create_diploma(diploma: DiplomaCreate, db: Session = Depends(get_db)):
-    db_diploma = Diploma(**diploma.dict())
+    db_diploma = Diploma(**diploma.model_dump())
     db.add(db_diploma)
     db.commit()
     db.refresh(db_diploma)

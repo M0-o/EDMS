@@ -7,26 +7,26 @@ import {
 } from "@/components/ui/sidebar"
 import { studentSchemaOut } from "@/schemas/studentSchemas"
 import { z } from "zod"
-import tdata from "@/app/dashboard/data.json"
+import { studentsService } from "@/services/studentService"
+import {  useEffect, useState } from "react"
 
-const data : z.infer<typeof studentSchemaOut>[] = [{
-  id: 1,
-  first_name: "John",
-  last_name: "Doe",
-  cne: "CNE123",
-  apogee: "APOGEE123",
-  email: "john.doe@example.com",
-  created_at: "2023-01-01",
-}, {
-  id: 2,
-  first_name: "Jane",
-  last_name: "Smith",
-  cne: "CNE456",
-  apogee: "APOGEE456",
-  email: "jane.smith@example.com",
-  created_at: "2023-01-02",
-}]
 export default function Page() {
+  const [students, setStudents] = useState<z.infer<typeof studentSchemaOut>[]>([])
+
+  useEffect(() => {
+    const fetchStudents = async () => {
+      const students = await studentsService.getAll().catch((error) => {
+        console.error("Failed to fetch students:", error)
+        return []
+      })
+      setStudents(students)
+      console.log("Fetched students:", students)
+    }
+
+    fetchStudents()
+    
+  }, [])
+
   return (
     <SidebarProvider
       style={
@@ -43,7 +43,7 @@ export default function Page() {
           <div className="@container/main flex flex-1 flex-col gap-2">
             <div className="flex flex-col gap-4 py-4 md:gap-6 md:py-6">
             
-              <StudentsDataTable pdata={data} />
+              <StudentsDataTable pdata={students} />
              
             </div>
           </div>

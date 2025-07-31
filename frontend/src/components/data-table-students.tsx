@@ -107,7 +107,7 @@ export const schema = z.object({
   limit: z.string(),
   reviewer: z.string(),
 })
-
+import debounce from 'lodash/debounce'
 // Create a separate component for the drag handle
 function DragHandle({ id }: { id: number }) {
   const { attributes, listeners } = useSortable({
@@ -215,7 +215,10 @@ function DraggableRow({ row }: { row: Row<z.infer<typeof studentSchema>> }) {
 
 
 export function StudentsDataTable({ pdata }: { pdata: z.infer<typeof studentSchema>[] }) {
-  const [data, setData] = React.useState(() => pdata)
+   const [data, setData] = React.useState<z.infer<typeof studentSchema>[]>([])
+  React.useEffect(() => {
+    setData(pdata)
+  }, [pdata])
   const [URLsearchParams, setURLsearchParams] = useSearchParams()
   const [rowSelection, setRowSelection] = React.useState({})
   const [columnVisibility, setColumnVisibility] =
@@ -287,7 +290,25 @@ function handleDragEnd(event: DragEndEvent) {
   }
     // Set the search params for filtering
   //t the initial filter based on URL search params
- 
+   const handleSearch = React.useMemo(
+    () =>
+      debounce((value: string) => {
+        setURLsearchParams(prev => {
+          const newParams = new URLSearchParams(prev)
+          newParams.set("search", value)
+          return newParams
+        }, { replace: true })
+        table.setColumnFilters([{ id: "first_name", value }])
+      }, 300),
+    [setURLsearchParams, table]
+  )
+
+  // clean up on unmount
+  React.useEffect(() => {
+    return () => {
+      handleSearch.cancel()
+    }
+  }, [handleSearch])
 
   return (
     <div className=" mx-5">
@@ -298,18 +319,8 @@ function handleDragEnd(event: DragEndEvent) {
           className="max-w-sm"
           defaultValue={URLsearchParams.get("search") || ""}
           onChange={(e) => {
-            setURLsearchParams(prev => {
-              const newParams = new URLSearchParams(prev)
-              newParams.set("search", e.target.value)
-              return newParams
-            }
-            , {replace: true})
-            table.setColumnFilters([
-              {
-                id: "first_name",
-                value: e.target.value,
-              },
-            ])
+            handleSearch(e.target.value)
+            
           }}
         />
         <div className="gap-2 flex items-center">

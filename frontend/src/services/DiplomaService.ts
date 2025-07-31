@@ -18,11 +18,12 @@ export const diplomaService = {
     if (diploma.file) {
       formData.append("file", diploma.file)
     }
-
+    
     const response = await fetch(`${API_BASE}/diplomas`, {
       method: 'POST',
       body: formData,
     })
+    console.log(formData.entries())
     return response.json()
   },
 

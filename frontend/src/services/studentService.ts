@@ -4,7 +4,10 @@ const API_BASE = 'http://localhost:8000'
 
 export const studentsService = {
   async getAll() : Promise<z.infer<typeof studentSchemaOut>[]>  {
-    const response = await fetch(`${API_BASE}/students`)
+    const response = await fetch(`${API_BASE}/students`,{
+      method: 'GET',
+      headers: { 'Content-Type': 'application/json' },
+    })
     return response.json()
   },
 

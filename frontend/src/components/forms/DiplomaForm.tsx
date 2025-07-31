@@ -13,6 +13,10 @@ import { FileText, Upload, Calendar, Building, Hash, X } from "lucide-react"
 import { useState } from "react"
 import { diplomaSchemaCreate } from "@/schemas/diplomaSchemas"
 import { useSearchParams } from "react-router-dom"
+import { useMemo, useEffect } from "react"
+import debounce from "lodash/debounce"
+import { diplomaService } from "@/services/DiplomaService"
+
 export default function DiplomaForm() {
 
   const [uploadedFile, setUploadedFile] = useState<File | null>(null)
@@ -28,59 +32,85 @@ export default function DiplomaForm() {
     defaultValues: initialValues,
   })
 
-/*   form.watch((value) => {
-    const params = new URLSearchParams()
-    params.set("student_id", value.student_id?.toString() as string)
-    params.set("title", value.title as string)
-    params.set("institution", value.institution as string)
-    params.set("issue_date", value.issue_date as string)
-    setURLsearchParams(params, { replace: true })
-  }) */
-function updateParam(key: string, value: string) {
-  const p = new URLSearchParams(URLsearchParams)
-  if (value) p.set(key, value)
-  else p.delete(key)
-  setURLsearchParams(p, { replace: true })
-}
+const debouncedUpdateParams = useMemo(
+    () =>
+        debounce((value: z.infer<typeof diplomaSchemaCreate>) => {
+            const params = new URLSearchParams()
+            params.set(
+              "student_id",
+              value.student_id.toLocaleString("fullwide", { useGrouping: false }) || ""
+            )
+            params.set("title", value.title || "")
+            params.set("institution", value.institution || "")
+            params.set("issue_date", value.issue_date || "")
+            setURLsearchParams(params, { replace: true })
+        }, 300),
+    [setURLsearchParams]
+)
+
+useEffect(() => {
+    const subscription = form.watch((value) => {
+        debouncedUpdateParams(value)
+    })
+    return () => {
+        subscription.unsubscribe()
+        debouncedUpdateParams.cancel()
+    }
+}, [form, debouncedUpdateParams])
+
   function onSubmit(values: z.infer<typeof diplomaSchemaCreate>) {
 
-    toast.success("Diploma registered successfully!", {
-      description: (
-        <div className="mt-2 space-y-1">
-          <p>
-            <strong>{values.title}</strong>
-          </p>
-          <p>Student ID: {values.student_id}</p>
-          <p>Institution: {values.institution}</p>
-          <p>Issue Date: {new Date(values.issue_date).toLocaleDateString()}</p>
-          {uploadedFile && <p>File: {uploadedFile.name}</p>}
-        </div>
-      ),
-    })
+   
+    diplomaService.create(values)
+      .then((response) => {
+        
+        toast.success("Diploma registered successfully!", {
+          description: (
+            <div className="mt-2 space-y-1">
+              <p>
+                <strong>{values.title}</strong>
+              </p>
+              <p>Student ID: {values.student_id}</p>
+              <p>Institution: {values.institution}</p>
+              <p>Issue Date: {new Date(values.issue_date).toLocaleDateString()}</p>
+              {uploadedFile && <p>File: {uploadedFile.name}</p>}
+            </div>
+        
+          ),
+        })
+        console.log("Diploma registered successfully:", response.ok)
+        // Reset form and file after successful submission
+        form.reset()
+        setUploadedFile(null)
+      })
+      .catch((error) => {
+        console.error("Failed to register diploma:", error)
+        toast.error("Failed to register diploma. Please try again.")
+      })
+ 
 
     // Reset form and file after successful submission
     form.reset()
     setUploadedFile(null)
   }
 
-  const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    const file = event.target.files?.[0]
-    if (file) {
-      // Check file size (limit to 10MB)
-      if (file.size > 10 * 1024 * 1024) {
-        toast.error("File size must be less than 10MB")
-        return
-      }
+   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0]   // ← actually grab the file
+    if (!file) return
 
-      // Check file type (allow common document formats)
-      const allowedTypes = ["application/pdf", "image/jpeg", "image/png", "image/jpg"]
-      if (!allowedTypes.includes(file.type)) {
-        toast.error("Please upload a PDF, JPEG, or PNG file")
-        return
-      }
-
-      setUploadedFile(file)
+    // size/type checks
+    if (file.size > 10 * 1024 * 1024) {
+      toast.error("File size must be less than 10MB")
+      return
     }
+    const allowed = ["application/pdf","image/jpeg","image/png"]
+    if (!allowed.includes(file.type)) {
+      toast.error("Please upload a PDF, JPEG, or PNG file")
+      return
+    }
+
+    setUploadedFile(file)
+    form.setValue("file", file, { shouldValidate: true })
   }
 
   const removeFile = () => {
@@ -121,9 +151,7 @@ function updateParam(key: string, value: string) {
                         type="number"
                         placeholder="Enter student ID"
                         {...field}
-                        onChange={(e) =>
-                           { updateParam("student_id", e.target.value)
-                            return field.onChange(Number.parseInt(e.target.value) || 0)}}
+                        onChange={(e) => field.onChange(Number.parseInt(e.target.value) || 0)}
                       />
                     </FormControl>
                     <FormDescription>The unique identifier for the student</FormDescription>

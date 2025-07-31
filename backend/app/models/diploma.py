@@ -16,7 +16,7 @@ class Diploma(Base):
     title = Column(String(200), nullable=False)  # Degree title
     institution = Column(String(200), nullable=False)
     issue_date = Column(Date, nullable=False)
-    
+    document_id = Column(Integer, ForeignKey("documents.id"), nullable=True)  # Optional document reference
     # Status
     is_valid = Column(Boolean, default=True)
     
@@ -24,7 +24,12 @@ class Diploma(Base):
     created_at = Column(DateTime(timezone=True), server_default=func.now())
       # Relationships
     student = relationship("Student", back_populates="diplomas")
-    files = relationship("DiplomaFile", back_populates="diploma")
+    document = relationship(
+        "Document",
+        back_populates="diploma",
+        foreign_keys="[Document.diploma_id]",
+        cascade="all, delete-orphan"
+    )
     status_history = relationship("DiplomaStatus", back_populates="diploma")
     
     def __repr__(self):

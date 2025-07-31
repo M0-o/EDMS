@@ -31,7 +31,7 @@ from app.db import Base
 from app.models.user import User        # No dependencies
 from app.models.student import Student  # No dependencies  
 from app.models.diploma import Diploma  # Depends on Student
-from app.models.document import DiplomaFile  # Depends on Diploma
+from app.models.document import Document # Depends on Diploma
 from app.models.diploma_status import DiplomaStatus  # Depends on Diploma  # Make sure your models are imported
 target_metadata = Base.metadata
 

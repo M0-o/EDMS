@@ -8,10 +8,14 @@ export const diplomaSchemaCreate = z.object({
   issue_date: z.string().refine((date) => !isNaN(Date.parse(date)), {
     message: "Issue date must be a valid date",
   }),
+  file: z.instanceof(File).optional().refine((file) => file ? file.size <= 10 * 1024 * 1024 : true, {
+      message: "File size must be less than 10MB",
+  }),
 })
 
 export const diplomaSchemaOut = diplomaSchemaCreate.extend({
-  id: z.number().int() ,
+    id: z.number().int() ,
+    document_id: z.number().int().optional(),
     is_valid: z.boolean(),
     created_at: z.string(),
 })

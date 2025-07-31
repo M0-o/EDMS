@@ -14,6 +14,8 @@ import { studentsService } from "@/services/studentService"
 import { studentSchemaCreate } from "@/schemas/studentSchemas"
 import { useSearchParams } from "react-router-dom"
 
+import debounce from 'lodash/debounce'
+import { useEffect, useMemo } from 'react'
 
 export default function StudentForm() {
 
@@ -32,19 +34,32 @@ export default function StudentForm() {
   })
   
   //persist the form data in the URL search params
-  form.watch((value) => {
-    const params = new URLSearchParams()
-    params.set("first_name", value.first_name as string )
-    params.set("last_name", value.last_name as string )
-    params.set("cne", value.cne as string )
-    params.set("apogee", value.apogee as string)
-    params.set("email", value.email as string)
-    setURLsearchParams(params)
-  })
+   const debouncedUpdateParams = useMemo(
+    () =>
+      debounce((value: z.infer<typeof studentSchemaCreate>) => {
+        const params = new URLSearchParams()
+        params.set("first_name", value.first_name || "")
+        params.set("last_name",  value.last_name  || "")
+        params.set("cne",        value.cne        || "")
+        params.set("apogee",     value.apogee     || "")
+        params.set("email",      value.email      || "")
+        setURLsearchParams(params, { replace: true })
+      }, 300),
+    [setURLsearchParams]
+  )
+
+  useEffect(() => {
+    const subscription = form.watch((value) => {
+      debouncedUpdateParams(value as z.infer<typeof studentSchemaCreate>)
+    })
+    return () => {
+      subscription.unsubscribe()
+      debouncedUpdateParams.cancel()
+    }
+  }, [form, debouncedUpdateParams])
 
   function onSubmit(values: z.infer<typeof studentSchemaCreate>) {
 
- 
 
     // Convert empty email to undefined for optional handling
     const submitData = {

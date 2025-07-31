@@ -9,6 +9,8 @@ import {
 import { z } from "zod"
 
 import type { diplomaSchemaOut } from "@/schemas/diplomaSchemas"
+import { diplomaService } from "@/services/DiplomaService"
+import { useEffect, useState } from "react"
 
 const data : z.infer<typeof diplomaSchemaOut>[] = [{
     id: 1,
@@ -56,6 +58,20 @@ const data : z.infer<typeof diplomaSchemaOut>[] = [{
     created_at: "2023-05-02T11:10:00Z",
   },]
 export default function Page() {
+    const [data, setData] = useState<z.infer<typeof diplomaSchemaOut>[]>([])
+    useEffect(() => {
+        const fetchDiplomas = async () => {
+            try {
+                const diplomas = await diplomaService.getAll()
+                setData(diplomas)
+                console.log("Fetched diplomas:", diplomas)
+            } catch (error) {
+                console.error("Failed to fetch diplomas:", error)
+            }
+        }
+
+        fetchDiplomas()
+    }, [])
   return (
     <SidebarProvider
       style={

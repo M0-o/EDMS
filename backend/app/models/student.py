@@ -22,8 +22,9 @@ class Student(Base):
     created_at = Column(DateTime(timezone=True), server_default=func.now())
     
     # Relationships
-    diplomas = relationship("Diploma", back_populates="student")
-    
+    diplomas = relationship("Diploma", back_populates="student", cascade="all, delete-orphan")
+    documents = relationship("Document", back_populates="student", cascade="all, delete-orphan" )
+
     def __repr__(self):
         return f"<Student(id={self.id}, cne='{self.cne}', name='{self.full_name}')>"
     

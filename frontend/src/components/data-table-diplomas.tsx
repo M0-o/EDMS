@@ -66,6 +66,7 @@ import { Link } from "react-router-dom"
 // Diploma schema
 import { diplomaSchemaOut } from "@/schemas/diplomaSchemas"
 import { useSearchParams } from "react-router-dom"
+import debounce from "lodash/debounce"
 // Create a separate component for the drag handle
 function DragHandle({ id }: { id: number }) {
   const { attributes, listeners } = useSortable({
@@ -199,7 +200,10 @@ export function DiplomasDataTable({
 }: {
   pdata: z.infer<typeof diplomaSchemaOut>[]
 }) {
-  const [data, setData] = React.useState(() => pdata)
+  const [data, setData] = React.useState<z.infer<typeof diplomaSchemaOut>[]>([])
+  React.useEffect(() => {
+    setData(pdata)
+  }, [pdata])
   const [searchParams, setSearchParams] = useSearchParams()
   const [rowSelection, setRowSelection] = React.useState({})
   const [columnVisibility, setColumnVisibility] = React.useState<VisibilityState>({
@@ -268,6 +272,26 @@ export function DiplomasDataTable({
     }
   }
 
+     const handleSearch = React.useMemo(
+      () =>
+        debounce((value: string) => {
+          setSearchParams(prev => {
+            const newParams = new URLSearchParams(prev)
+            newParams.set("search", value)
+            return newParams
+          }, { replace: true })
+          table.setColumnFilters([{ id: "title", value }])
+        }, 300),
+      [setSearchParams, table]
+    )
+  
+    // clean up on unmount
+    React.useEffect(() => {
+      return () => {
+        handleSearch.cancel()
+      }
+    }, [handleSearch])
+
   return (
     <div className="mx-5">
       <div className="w-full">
@@ -277,18 +301,7 @@ export function DiplomasDataTable({
             className="max-w-sm"
             defaultValue={searchParams.get("search") || ""}
             onChange={(e) => {
-            setSearchParams(prev => {
-              const newParams = new URLSearchParams(prev)
-              newParams.set("search", e.target.value)
-              return newParams
-            }
-            , {replace: true})
-            table.setColumnFilters([
-              {
-                id: "title",
-                value: e.target.value,
-              },
-            ])
+           handleSearch(e.target.value)
           }}
           />
           <div className="gap-2 flex items-center">

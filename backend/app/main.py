@@ -3,7 +3,6 @@ from app.routers import diplomas , students , documents
 # Import all model classes so SQLAlchemy can find relationships
 from app.models.diploma import Diploma
 from app.models.student import Student
-from app.models.user import User
 from app.models.document import Document
 from app.models.diploma_status import DiplomaStatus
 from app.db import Base, engine

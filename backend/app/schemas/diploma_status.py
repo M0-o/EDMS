@@ -28,7 +28,7 @@ class DiplomaStatusCreate(DiplomaStatusBase):
 class DiplomaStatusOut(DiplomaStatusBase):
     id: int
     diploma_id: int
-    changed_by_user_id: int
+    changed_by_clerk_user_id: int
     previous_status: Optional[StatusType] = None
     date: datetime
     

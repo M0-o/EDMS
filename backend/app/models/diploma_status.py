@@ -22,7 +22,7 @@ class DiplomaStatus(Base):
     diploma_id = Column(Integer, ForeignKey("diplomas.id"), nullable=False)
     
     # Foreign key to user who changed the status (admin/verifier)
-    changed_by_user_id = Column(Integer, ForeignKey("users.id"), nullable=False)
+    changed_by_clerk_user_id = Column( Text , nullable=False)
     
     # Status information
     status = Column(Enum(StatusType), nullable=False, default=StatusType.PENDING)
@@ -31,14 +31,14 @@ class DiplomaStatus(Base):
     # Status details
     reason = Column(Text)  # Reason for status change
     notes = Column(Text)  # Additional notes
-    verification_code = Column(String(100))  # External verification reference
+
     
     # Timestamps
     date = Column(DateTime(timezone=True), server_default=func.now())
     
       # Relationships
     diploma = relationship("Diploma", back_populates="status_history")
-    changed_by = relationship("User")  # Removed back_populates for MVP simplicity
+       # Removed back_populates for MVP simplicity
     
     def __repr__(self):
         return f"<DiplomaStatus(id={self.id}, diploma_id={self.diploma_id}, status='{self.status.value}')>"

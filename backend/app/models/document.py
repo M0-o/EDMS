@@ -1,4 +1,4 @@
-from sqlalchemy import Column, Integer, String, DateTime, ForeignKey, Enum
+from sqlalchemy import Column, Integer, String, DateTime, ForeignKey, Enum ,Text
 from sqlalchemy.sql import func
 from sqlalchemy.orm import relationship
 from app.db import Base
@@ -22,7 +22,7 @@ class Document(Base):
     # Relations
     student_id        = Column(Integer, ForeignKey("students.id"), nullable=False)
     diploma_id        = Column(Integer, ForeignKey("diplomas.id"), nullable=True)
-    uploaded_by_id    = Column(Integer, ForeignKey("users.id"), nullable=False)
+    uploaded_by_clerk_user_id    = Column(Text, nullable=False)
 
     uploaded_at       = Column(DateTime(timezone=True), server_default=func.now())
 
@@ -36,4 +36,4 @@ class Document(Base):
         back_populates="document",
         foreign_keys=[diploma_id]
     )
-    uploaded_by       = relationship("User")
+    

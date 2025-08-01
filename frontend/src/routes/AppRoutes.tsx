@@ -6,6 +6,17 @@ import LoginPage from '../pages/auth/LoginPage'
 import NotFoundPage from '../pages/NotFoundPage'
 import CreateStudentPage from '../pages/students/CreateStudentPage'
 import CreateDiplomaPage from '../pages/diplomas/CreateDiplomaPage'
+import { Outlet } from 'react-router-dom'
+import { useUser } from '@clerk/clerk-react'
+
+function PrivateRoute({ redirectTo = '/login' }: { redirectTo?: string }) {
+  const { isSignedIn , isLoaded} = useUser()
+ if (!isLoaded) {
+    return null   // or a spinner
+  }
+  return isSignedIn ? <Outlet /> : <Navigate to={redirectTo} replace />
+}
+
 
 export function AppRoutes() {
   return (
@@ -14,12 +25,13 @@ export function AppRoutes() {
       <Route path="/login" element={<LoginPage />} />
       
       {/* Main app routes */}
-      <Route path="/" element={<HomePage />} />
-      <Route path="/students" element={<StudentsPage />} />
-      <Route path="/students/create" element={<CreateStudentPage />} />
-      <Route path="/diplomas" element={<DiplomasPage />} />
-      <Route path="/diplomas/create" element={<CreateDiplomaPage />} />
-      
+      <Route element={<PrivateRoute />}>
+        <Route path="/" element={<HomePage />} />
+        <Route path="/students" element={<StudentsPage />} />
+        <Route path="/students/create" element={<CreateStudentPage />} />
+        <Route path="/diplomas" element={<DiplomasPage />} />
+        <Route path="/diplomas/create" element={<CreateDiplomaPage />} />
+      </Route>
       {/* Redirect root to home */}
       
       {/* Redirect */}

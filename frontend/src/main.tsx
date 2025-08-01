@@ -11,7 +11,23 @@ if (!PUBLISHABLE_KEY) {
 
 createRoot(document.getElementById('root')!).render(
   <StrictMode>
-    <ClerkProvider publishableKey={PUBLISHABLE_KEY}>
+    <ClerkProvider 
+      publishableKey={PUBLISHABLE_KEY} 
+       appearance={{
+    variables: {
+      colorPrimary: 'var(--primary)',
+      colorText: 'var(--foreground)',
+      colorBackground: 'var(--card)',
+      colorInputBackground: 'var(--input)',
+      colorInputText: 'var(--foreground)',
+      colorDanger: 'var(--destructive)',
+      colorSuccess: 'var(--chart-4)',
+      borderRadius: '0.75rem',
+      colorPrimaryForeground: 'var(--primary-foreground)',
+      
+    },
+  
+  }}>
     <App />
     </ClerkProvider>
   </StrictMode>,

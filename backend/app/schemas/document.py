@@ -22,9 +22,9 @@ class DocumentOut(BaseModel):
     document_type: DocumentTypeEnum
     student_id: int
     diploma_id: Optional[int]
-    relative_path: str                
-    download_url: HttpUrl              
-    uploaded_by_id: int
+    relative_path: str
+    download_url: HttpUrl
+    uploaded_by_clerk_user_id: str
     uploaded_at: datetime
 
     class Config:

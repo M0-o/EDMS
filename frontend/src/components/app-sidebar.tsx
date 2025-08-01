@@ -30,6 +30,7 @@ import {
   SidebarMenuButton,
   SidebarMenuItem,
 } from "@/components/ui/sidebar"
+import {useUser} from "@clerk/clerk-react"
 
 const data = {
   user: {
@@ -58,6 +59,8 @@ const data = {
 }
 
 export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
+  const { user } = useUser()
+  console.log(user?.primaryEmailAddress?.emailAddress)
   return (
     <Sidebar collapsible="offcanvas" {...props}>
       <SidebarHeader>
@@ -80,7 +83,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
 
       </SidebarContent>
       <SidebarFooter>
-        <NavUser user={data.user} />
+        <NavUser user={{ email: user?.primaryEmailAddress?.emailAddress || "", avatar: user?.imageUrl || "" }} />
       </SidebarFooter>
     </Sidebar>
   )

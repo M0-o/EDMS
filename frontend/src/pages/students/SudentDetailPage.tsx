@@ -1,5 +1,5 @@
 import { studentSchemaOut } from "@/schemas/studentSchemas";
-
+import z from "zod"
 //this is a page to view an individual student's details 
 
 export default function StudentDetailPage() {
@@ -12,6 +12,7 @@ export default function StudentDetailPage() {
     cne: "CNE123",
     apogee: "APOGEE123",
     email: "john.doe@example.com",
+    created_at: "2023-10-01T12:00:00Z",
   }
 
   return (

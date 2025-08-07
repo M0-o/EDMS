@@ -48,7 +48,7 @@ export function NavMain({
     <Collapsible>
     <SidebarGroup>
       <CollapsibleTrigger className="flex items-left">
-        Traitement des lauréats
+        Traitement des Diplomes
             <ChevronDown className="ml-auto transition-transform group-data-[state=open]/collapsible:rotate-180" />
          </CollapsibleTrigger >
       <CollapsibleContent >

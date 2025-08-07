@@ -37,6 +37,7 @@ class Diploma(Base):
     
     @property
     def current_status(self):
-        if self.status_history:
-            return self.status_history.sort(key=lambda x: x.date, reverse=True)[0].status
-        return None
+        if not self.status_history:
+            return ""
+        latest = max(self.status_history, key=lambda s: s.date)
+        return latest.status

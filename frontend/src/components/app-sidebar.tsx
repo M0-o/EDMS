@@ -1,7 +1,7 @@
 import * as React from "react"
 import {
   IconDashboard,
-  IconFileDescription,
+  
   IconInnerShadowTop,
   IconListDetails,
   
@@ -33,73 +33,57 @@ const navMain =  [
       url: "/diplomas",
       icon: IconListDetails,
     },
-    {
-      title: "Traitement des lauréats",
-      url: "/diplomastatus",
-      icon: IconFileDescription,
-    },
-    /*  EN_ATTENTE = "en attente"
-    ENVOYE_A_LA_PRESIDENCE = "envoyé à la présidence"
-    ARRIVE_A_LA_PRESIDENCE = "arrivé à la présidence"
-    ENVOYE_A_L_ETABLISSEMENT = "envoyé à l'établissement"
-    ARRIVE_A_L_ETABLISSEMENT = "arrivé à l'établissement"
-    CORRECTION_REQUISE = "correction requise"
-    RENVOYE_APRES_CORRECTION = "renvoyé après correction"
-    SIGNE_PAR_PRESIDENT = "signé par le président" 
-    PRET = "prêt"
-    DELIVRE = "délivré" */
-    //add a tap for each status
- 
+  
   ]
 
 const subItems = [   {
       title:"En attente",
-      url: "/diplomastatus/en-attente",
+      url: "/diploma_status/en-attente",
       icon: IconInnerShadowTop,
     },
     {
       title:"Envoyé à la présidence",
-      url: "/diplomastatus/envoye-a-la-presidence",
+      url: "/diploma_status/envoye-a-la-presidence",
       icon: IconInnerShadowTop,
     },
     {
       title:"Arrivé à la présidence",
-      url: "/diplomastatus/arrive-a-la-presidence",
+      url: "/diploma_status/arrive-a-la-presidence",
       icon: IconInnerShadowTop,
     },
     {
       title:"Envoyé à l'établissement",
-      url: "/diplomastatus/envoye-a-l-etablissement",
+      url: "/diploma_status/envoye-a-l-etablissement",
       icon: IconInnerShadowTop,
     },
     {
       title:"Arrivé à l'établissement",
-      url: "/diplomastatus/arrive-a-l-etablissement",
+      url: "/diploma_status/arrive-a-l-etablissement",
       icon: IconInnerShadowTop,
     },
     {
       title:"Correction requise",
-      url: "/diplomastatus/correction-requise",
+      url: "/diploma_status/correction-requise",
       icon: IconInnerShadowTop,
     },
     {
       title:"Renvoyé après correction",
-      url: "/diplomastatus/renvoye-apres-correction",
+      url: "/diploma_status/renvoye-apres-correction",
       icon: IconInnerShadowTop,
     },
     {
       title:"Signé par le président",
-      url: "/diplomastatus/signe-par-president",
+      url: "/diploma_status/signe-par-president",
       icon: IconInnerShadowTop,
     },
     {
       title:"Prêt",
-      url: "/diplomastatus/pret",
+      url: "/diploma_status/pret",
       icon: IconInnerShadowTop,
     },
     {
       title:"Délivré",
-      url: "/diplomastatus/delivre",
+      url: "/diploma_status/delivre",
       icon: IconInnerShadowTop,
     },]
  

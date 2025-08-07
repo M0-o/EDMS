@@ -19,7 +19,8 @@ class DiplomaOut(BaseModel):
     issue_date: date
     is_valid: bool
     document: Optional[DocumentOut] = None
-    status_history : list["DiplomaStatusOut"] = []  # Assuming DiplomaStatusOut is defined elsewhere
+    status_history : list["DiplomaStatusOut"] = [] 
+    current_status: str = ""
     created_at: datetime
 
     class Config:

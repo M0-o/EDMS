@@ -10,3 +10,6 @@ alembic
 fastapi[all]
 python-jose[cryptography]
 passlib[bcrypt]
+jose
+requests
+authlib[crypto]

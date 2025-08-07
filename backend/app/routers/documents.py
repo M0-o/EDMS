@@ -1,11 +1,11 @@
-from fastapi import APIRouter, Depends
+from fastapi import APIRouter, Depends, Request
 from sqlalchemy.orm import Session
+
+from app.models.document import Document as DocModel
+from app.schemas.document import DocumentOut
 from app.db import SessionLocal
-from app.models.document import Document
-from app.schemas.document import DocumentCreate, DocumentOut
 
 router = APIRouter()
-
 def get_db():
     db = SessionLocal()
     try:
@@ -13,14 +13,8 @@ def get_db():
     finally:
         db.close()
 
-@router.post("/", response_model=DocumentOut)
-def create_document(document: DocumentCreate, db: Session = Depends(get_db)):
-    db_document = Document(**document.model_dump())
-    db.add(db_document)
-    db.commit()
-    db.refresh(db_document)
-    return db_document
-
 @router.get("/", response_model=list[DocumentOut])
-def list_documents(db: Session = Depends(get_db)):
-    return db.query(Document).all()
+def list_docs(request: Request, db: Session = Depends(get_db)):
+    docs = db.query(DocModel).all()
+  
+    return docs

@@ -1,5 +1,6 @@
 
 import { z } from "zod"
+import { documentSchemaOut } from "./documentSchemas"
 
 export const diplomaSchemaCreate = z.object({
   student_id: z.number().int().positive("Student ID must be a positive integer"),
@@ -15,7 +16,7 @@ export const diplomaSchemaCreate = z.object({
 
 export const diplomaSchemaOut = diplomaSchemaCreate.extend({
     id: z.number().int() ,
-    document_id: z.number().int().optional(),
+    document: z.array(documentSchemaOut).optional(),
     is_valid: z.boolean(),
     created_at: z.string(),
 })

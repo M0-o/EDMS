@@ -34,6 +34,10 @@ class Document(Base):
     diploma = relationship(
         "Diploma",
         back_populates="document",
-        foreign_keys=[diploma_id]
+        uselist=False,
     )
     
+    @property
+    def download_url(self) -> str:
+    # this assumes you mounted StaticFiles at "/uploads" pointing at your "uploads/" folder
+        return f"http://localhost:8000/uploads/{self.file_path}"

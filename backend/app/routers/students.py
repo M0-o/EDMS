@@ -23,4 +23,5 @@ def create_student(student: StudentCreate, db: Session = Depends(get_db)):
 
 @router.get("/", response_model=list[StudentOut])
 def list_students(db: Session = Depends(get_db)):
-    return db.query(Student).all()
+    result = db.query(Student).all()
+    return result

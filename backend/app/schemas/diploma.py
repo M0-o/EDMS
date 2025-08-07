@@ -1,6 +1,7 @@
 from pydantic import BaseModel
 from datetime import date, datetime
 from typing import Optional 
+from app.schemas.document import DocumentOut 
 
 # For creating diplomas
 class DiplomaCreate(BaseModel):
@@ -17,7 +18,7 @@ class DiplomaOut(BaseModel):
     institution: str
     issue_date: date
     is_valid: bool
-    document_id: Optional[int] 
+    document: Optional[DocumentOut] = None
     created_at: datetime
 
     class Config:

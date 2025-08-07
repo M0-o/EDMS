@@ -8,7 +8,7 @@ import CreateStudentPage from '../pages/students/CreateStudentPage'
 import CreateDiplomaPage from '../pages/diplomas/CreateDiplomaPage'
 import { Outlet } from 'react-router-dom'
 import { useUser } from '@clerk/clerk-react'
-
+import StudentDetailsPage from '@/pages/students/SudentDetailPage'
 function PrivateRoute({ redirectTo = '/login' }: { redirectTo?: string }) {
   const { isSignedIn , isLoaded} = useUser()
  if (!isLoaded) {
@@ -28,6 +28,7 @@ export function AppRoutes() {
       <Route element={<PrivateRoute />}>
         <Route path="/" element={<HomePage />} />
         <Route path="/students" element={<StudentsPage />} />
+        <Route path="students/:studentId" element={<StudentDetailsPage />} />
         <Route path="/students/create" element={<CreateStudentPage />} />
         <Route path="/diplomas" element={<DiplomasPage />} />
         <Route path="/diplomas/create" element={<CreateDiplomaPage />} />

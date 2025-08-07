@@ -15,12 +15,13 @@ import { diplomaSchemaCreate } from "@/schemas/diplomaSchemas"
 import { useSearchParams } from "react-router-dom"
 import { useMemo, useEffect } from "react"
 import debounce from "lodash/debounce"
-import { diplomaService } from "@/services/DiplomaService"
+import { useDiplomaService } from "@/services/DiplomaService"
 
 export default function DiplomaForm() {
 
   const [uploadedFile, setUploadedFile] = useState<File | null>(null)
   const [URLsearchParams, setURLsearchParams] = useSearchParams()
+  const diplomaService = useDiplomaService()
     const initialValues = {
         student_id: Number(URLsearchParams.get("student_id")) || 0,
         title: URLsearchParams.get("title") || "",

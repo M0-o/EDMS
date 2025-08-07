@@ -7,15 +7,16 @@ import {
 } from "@/components/ui/sidebar"
 import { studentSchemaOut } from "@/schemas/studentSchemas"
 import { z } from "zod"
-import { studentsService } from "@/services/studentService"
+import { useStudentService } from "@/services/studentService"
 import {  useEffect, useState } from "react"
 
 export default function Page() {
   const [students, setStudents] = useState<z.infer<typeof studentSchemaOut>[]>([])
+  const studentService= useStudentService()
 
   useEffect(() => {
     const fetchStudents = async () => {
-      const students = await studentsService.getAll().catch((error) => {
+      const students = await studentService.getAll().catch((error) => {
         console.error("Failed to fetch students:", error)
         return []
       })

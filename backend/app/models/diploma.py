@@ -16,7 +16,7 @@ class Diploma(Base):
     title = Column(String(200), nullable=False)  # Degree title
     institution = Column(String(200), nullable=False)
     issue_date = Column(Date, nullable=False)
-    document_id = Column(Integer, ForeignKey("documents.id"), nullable=True)  # Optional document reference
+    
     # Status
     is_valid = Column(Boolean, default=True)
     
@@ -27,10 +27,16 @@ class Diploma(Base):
     document = relationship(
         "Document",
         back_populates="diploma",
-        foreign_keys="[Document.diploma_id]",
+        uselist=False,  
         cascade="all, delete-orphan"
     )
     status_history = relationship("DiplomaStatus", back_populates="diploma")
     
     def __repr__(self):
         return f"<Diploma(id={self.id}, title='{self.title}', student_id={self.student_id})>"
+    
+    @property
+    def current_status(self):
+        if self.status_history:
+            return self.status_history.sort(key=lambda x: x.date, reverse=True)[0].status
+        return None

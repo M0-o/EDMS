@@ -10,7 +10,7 @@ import { Input } from "@/components/ui/input"
 import { toast } from "sonner"
 import { User, Mail, Hash, GraduationCap } from "lucide-react"
 
-import { studentsService } from "@/services/studentService"
+import { useStudentService } from "@/services/studentService"
 import { studentSchemaCreate } from "@/schemas/studentSchemas"
 import { useSearchParams } from "react-router-dom"
 
@@ -20,6 +20,7 @@ import { useEffect, useMemo } from 'react'
 export default function StudentForm() {
 
   const [URLsearchParams , setURLsearchParams] = useSearchParams();
+  const studentService = useStudentService()
     const initialValues = {
         first_name: URLsearchParams.get("first_name") || "",
         last_name: URLsearchParams.get("last_name") || "",
@@ -67,7 +68,7 @@ export default function StudentForm() {
       email: values.email === "" ? undefined : values.email,
     }
     // Call the create method from your service
-    studentsService.create(submitData)
+    studentService.create(submitData)
       .then((data) => {
         console.log("Student created successfully:", data)
         //show success toast and redirect to students page using react router 

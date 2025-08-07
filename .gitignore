@@ -47,3 +47,4 @@ backend/alembic/versions/*.pyc
 # Optional: compiled DBs or scratch files
 *.sqlite3
 *.db
+uploads

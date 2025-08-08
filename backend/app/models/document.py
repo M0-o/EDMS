@@ -17,7 +17,7 @@ class Document(Base):
     id                = Column(Integer, primary_key=True, index=True)
     original_filename = Column(String(255), nullable=False)
     file_path         = Column(String(500), nullable=False)
-    document_type     = Column(Enum(DocumentTypeEnum), nullable=False)
+    type     = Column(Enum(DocumentTypeEnum), nullable=False)
 
     # Relations
     student_id        = Column(Integer, ForeignKey("students.id"), nullable=False)
@@ -36,6 +36,11 @@ class Document(Base):
         back_populates="document",
         uselist=False,
     )
+
+    @property
+    def id_documents(self):
+        # return only non new_diploma documents
+        return [d for d in self.documents if d.type != DocumentTypeEnum.new_diploma]
     
     @property
     def download_url(self) -> str:

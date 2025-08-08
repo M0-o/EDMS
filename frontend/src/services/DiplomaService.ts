@@ -38,7 +38,7 @@ export function useDiplomaService() {
         Authorization: `Bearer ${token}`,
       },
     })
-    console.log(formData.entries())
+   
     return response.json()
   }
 
@@ -52,5 +52,15 @@ export function useDiplomaService() {
     })
   }
 
-  return { getAll, create, deleteById }
+  async function getOne(id: number): Promise<z.infer<typeof diplomaSchemaOut>> {
+    const token = await getToken()
+    const response = await fetch(`${API_BASE}/diplomas/${id}`, {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    })
+    return response.json()
+  }
+
+  return { getAll, create, deleteById , getOne}
 }

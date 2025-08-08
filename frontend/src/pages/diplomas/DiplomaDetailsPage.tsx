@@ -4,8 +4,12 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Separator } from "@/components/ui/separator"
 import { Avatar, AvatarFallback } from "@/components/ui/avatar"
 import { CalendarDays, Download, GraduationCap, User, FileText, Building2, CheckCircle, XCircle, Clock, Eye, ArrowLeft, AlertCircle, History } from 'lucide-react'
-import { useNavigate } from 'react-router-dom'
-// Sample diploma data based on the provided format
+import { useNavigate, useParams } from 'react-router-dom'
+import { useEffect, useState } from 'react'
+import { useDiplomaService } from "@/services/diplomaService"
+import { z } from "zod"
+import { diplomaSchemaOut } from "@/schemas/diplomaSchemas"
+
 const diplomaData = {
   "id": 24,
   "student_id": 3,
@@ -16,7 +20,7 @@ const diplomaData = {
   "document": {
     "id": 15,
     "original_filename": "master_diploma_certificate.jpg",
-    "document_type": "new_diploma",
+    "type": "new_diploma",
     "student_id": 3,
     "diploma_id": 24,
     "file_path": "jpeg/new_diploma/3/2025/08/8431a7705cae42678c7e12347eb1e6f6.jpg",
@@ -137,10 +141,34 @@ function getStatusIcon(status: string) {
 }
 
 export default function DiplomaDetailsPage() {
-  const diploma = diplomaData
+  const { diplomaId } = useParams()
+  const [diploma , setDiploma] = useState<z.infer<typeof diplomaSchemaOut> | null>(null)
+  const diplomaService = useDiplomaService()
   const student = studentInfo
-  const currentStatus = diploma.status_history[diploma.status_history.length - 1]
+  const currentStatus = diploma?.current_status
   const navigate = useNavigate()
+
+   useEffect(() => {
+        const fetchDiploma = async () => {
+          const diploma = await diplomaService.getOne(Number.parseInt(diplomaId || "1")).catch((error) => {
+            console.error("Failed to fetch diploma:", error)
+            return null
+          })
+          setDiploma(diploma)
+          console.log("Fetched diploma:", diploma)
+        }
+
+        fetchDiploma()
+
+      }, [])
+
+  if(!diploma) {
+    return (
+      <div className="container mx-auto p-6 max-w-6xl">
+        <h1 className="text-2xl font-bold">Loading Diploma Details...</h1>
+      </div>
+    )
+  }
   return (
     <div className="container mx-auto p-6 max-w-6xl">
       {/* Header with Back Button */}
@@ -187,7 +215,7 @@ export default function DiplomaDetailsPage() {
                   </div>
                 </div>
                 <div className="flex flex-col items-end gap-2">
-                  {getStatusBadge(currentStatus.status)}
+                  {getStatusBadge(currentStatus || "en attente")}
                   {diploma.is_valid ? (
                     <Badge variant="default" className="bg-green-100 text-green-800 hover:bg-green-100">
                       <CheckCircle className="h-3 w-3 mr-1" />
@@ -265,13 +293,13 @@ export default function DiplomaDetailsPage() {
             </CardHeader>
             <CardContent>
               <div className="space-y-4">
-                {diploma.status_history.map((history, index) => (
+                {diploma.status_history?.map((history, index) => (
                   <div key={history.id} className="flex gap-4">
                     <div className="flex flex-col items-center">
                       <div className="p-2 bg-white border-2 border-gray-200 rounded-full">
                         {getStatusIcon(history.status)}
                       </div>
-                      {index < diploma.status_history.length - 1 && (
+                      {index < diploma.status_history?.length - 1 && (
                         <div className="w-px h-16 bg-gray-200 mt-2" />
                       )}
                     </div>
@@ -364,7 +392,7 @@ export default function DiplomaDetailsPage() {
               <div className="space-y-4">
                 <div className="text-center">
                   <div className="text-2xl font-bold text-blue-600">
-                    {diploma.status_history.length}
+                    {diploma?.status_history.length}
                   </div>
                   <div className="text-sm text-muted-foreground">Status Changes</div>
                 </div>

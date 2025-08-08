@@ -39,6 +39,15 @@ export function useStudentService() {
     await fetch(`${API_BASE}/students/${id}`, { method: 'DELETE', headers: { Authorization: `Bearer ${token}` } })
   }
 
-  return {getAll , create , deleteById}
+  async function getOne(id : number): Promise<z.infer<typeof studentSchemaOut>> {
+    const token = await getToken()
+    const response = await fetch(`${API_BASE}/students/${id}`, {
+      method: 'GET',
+      headers: { Authorization: `Bearer ${token}` }
+    })
+    return response.json()
+  }
+
+  return {getAll , create , deleteById , getOne}
 }
 

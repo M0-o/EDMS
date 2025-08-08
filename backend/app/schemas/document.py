@@ -12,14 +12,14 @@ class DocumentTypeEnum(str, Enum):
 
 class DocumentCreate(BaseModel):
     original_filename: str
-    document_type: DocumentTypeEnum
+    type: DocumentTypeEnum
     student_id: int
     diploma_id: Optional[int] = None
 
 class DocumentOut(BaseModel):
     id: int
     original_filename: str
-    document_type: DocumentTypeEnum
+    type: DocumentTypeEnum
     student_id: int
     diploma_id: Optional[int]
     file_path: str

@@ -15,7 +15,7 @@ import { diplomaSchemaCreate } from "@/schemas/diplomaSchemas"
 import { useSearchParams } from "react-router-dom"
 import { useMemo, useEffect } from "react"
 import debounce from "lodash/debounce"
-import { useDiplomaService } from "@/services/DiplomaService"
+import { useDiplomaService } from "@/services/diplomaService"
 
 export default function DiplomaForm() {
 
@@ -59,9 +59,13 @@ useEffect(() => {
     }
 }, [form, debouncedUpdateParams])
 
-  function onSubmit(values: z.infer<typeof diplomaSchemaCreate>) {
-
+  async function onSubmit(values: z.infer<typeof diplomaSchemaCreate>) {
+    
+    const response = await diplomaService.create(values)
    
+   
+   
+    console.log(response.status)
     diplomaService.create(values)
       .then((response) => {
         
@@ -79,8 +83,8 @@ useEffect(() => {
         
           ),
         })
-        console.log("Diploma registered successfully:", response.ok)
-        // Reset form and file after successful submission
+        console.log("Diploma registered successfully:", response)
+       
         form.reset()
         setUploadedFile(null)
       })

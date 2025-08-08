@@ -1,7 +1,7 @@
 
 import { z } from "zod"
 import { documentSchemaOut } from "./documentSchemas"
-
+import { diplomaStatusOutSchema } from "./diplomaStatusSchemas"
 export const diplomaSchemaCreate = z.object({
   student_id: z.number().int().positive("Student ID must be a positive integer"),
   title: z.string().min(1, "Title is required"),
@@ -16,7 +16,9 @@ export const diplomaSchemaCreate = z.object({
 
 export const diplomaSchemaOut = diplomaSchemaCreate.extend({
     id: z.number().int() ,
-    document: z.array(documentSchemaOut).optional(),
+    document: documentSchemaOut.optional(),
+    current_status: z.string().optional(),
+    status_history: z.array(diplomaStatusOutSchema).optional(),
     is_valid: z.boolean(),
     created_at: z.string(),
 })

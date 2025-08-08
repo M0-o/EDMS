@@ -4,7 +4,11 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Separator } from "@/components/ui/separator"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { CalendarDays, Download, GraduationCap, Mail, User, FileText, Building2, CheckCircle, XCircle } from 'lucide-react'
-
+import {useParams} from "react-router-dom"
+import {useStudentService} from "@/services/studentService"
+import {useState , useEffect} from "react"
+import {studentSchemaOut} from "@/schemas/studentSchemas"
+import {z} from "zod"
 // Sample student data based on the provided format
 const studentData = {
   "id": 1,
@@ -34,7 +38,7 @@ const studentData = {
       "document": {
         "id": 4,
         "original_filename": "diploma_certificate.jpg",
-        "document_type": "new_diploma",
+        "type": "new_diploma",
         "student_id": 1,
         "diploma_id": 13,
         "file_path": "jpeg/new_diploma/1/2025/08/518fcc1588764658b65dc36655126a4d.jpg",
@@ -54,7 +58,7 @@ const studentData = {
       "document": {
         "id": 5,
         "original_filename": "certificate.jpg",
-        "document_type": "new_diploma",
+        "type": "new_diploma",
         "student_id": 1,
         "diploma_id": 14,
         "file_path": "jpeg/new_diploma/1/2025/08/c704467860f34874b0955c36e877a5ca.jpg",
@@ -73,7 +77,7 @@ const verificationDocuments = [
   {
     "id": 1,
     "student_id": 1,
-    "document_type": "high_school_diploma",
+    "type": "high_school_diploma",
     "title": "High School Diploma",
     "description": "Baccalauréat Sciences Mathématiques",
     "institution": "Lycée Mohammed V",
@@ -91,7 +95,7 @@ const verificationDocuments = [
   {
     "id": 2,
     "student_id": 1,
-    "document_type": "national_id",
+    "type": "national_id",
     "title": "National ID Card",
     "description": "Carte d'Identité Nationale",
     "institution": "Ministry of Interior",
@@ -109,7 +113,7 @@ const verificationDocuments = [
   {
     "id": 3,
     "student_id": 1,
-    "document_type": "previous_diploma",
+    "type": "previous_diploma",
     "title": "Bachelor's Degree Certificate",
     "description": "Licence en Informatique",
     "institution": "Université Hassan II",
@@ -127,7 +131,7 @@ const verificationDocuments = [
   {
     "id": 4,
     "student_id": 1,
-    "document_type": "transcript",
+    "type": "transcript",
     "title": "Academic Transcript",
     "description": "Official transcript from previous institution",
     "institution": "Université Hassan II",
@@ -187,8 +191,27 @@ function getDocumentTypeBadgeColor(documentType: string) {
 }
 
 export default function StudentDetailsPage() {
-  const student = studentData
+  const { studentId }= useParams();
+  const studentService = useStudentService()
+  const [student, setStudent] = useState<z.infer<typeof studentSchemaOut> | null>(null)
 
+  useEffect(() => {
+      const fetchStudent = async () => {
+        const student = await studentService.getOne(Number.parseInt(studentId || "1")).catch((error) => {
+          console.error("Failed to fetch student:", error)
+          return null
+        })
+        setStudent(student)
+        console.log("Fetched student:", student)
+      }
+  
+      fetchStudent()
+      
+    }, [])
+
+  if (!student) {
+    return <div className="container mx-auto p-6">Loading...</div>
+  }
   return (
     <div className="container mx-auto p-6 max-w-6xl">
       {/* Student Header */}
@@ -239,12 +262,12 @@ export default function StudentDetailsPage() {
           <GraduationCap className="h-6 w-6" />
           <h2 className="text-2xl font-bold">Diplomas & Certificates</h2>
           <Badge variant="secondary" className="ml-2">
-            {student.diplomas.length} Total
+            {student.diplomas?.length} Total
           </Badge>
         </div>
 
         <div className="grid gap-6">
-          {student.diplomas.map((diploma) => (
+          {student.diplomas?.map((diploma) => (
             <Card key={diploma.id} className="relative">
               <CardHeader>
                 <div className="flex items-start justify-between">
@@ -293,9 +316,9 @@ export default function StudentDetailsPage() {
                           <FileText className="h-5 w-5 text-blue-600" />
                         </div>
                         <div>
-                          <p className="font-medium">{diploma.document.original_filename}</p>
+                          <p className="font-medium">{diploma.document?.original_filename}</p>
                           <p className="text-sm text-muted-foreground">
-                            Uploaded: {formatDate(diploma.document.uploaded_at)}
+                            Uploaded: {formatDate(diploma.document?.uploaded_at)}
                           </p>
                         </div>
                       </div>
@@ -336,13 +359,13 @@ export default function StudentDetailsPage() {
                 <div className="flex items-start justify-between">
                   <div className="flex items-start gap-4 flex-1">
                     <div className="p-3 bg-gray-50 rounded-lg">
-                      {getDocumentTypeIcon(doc.document_type)}
+                      {getDocumentTypeIcon(doc.type)}
                     </div>
                     <div className="flex-1">
                       <div className="flex items-center gap-2 mb-2">
                         <h3 className="font-semibold text-lg">{doc.title}</h3>
-                        <Badge className={getDocumentTypeBadgeColor(doc.document_type)}>
-                          {doc.document_type.replace('_', ' ').toUpperCase()}
+                        <Badge className={getDocumentTypeBadgeColor(doc.type)}>
+                          {doc.type.replace('_', ' ').toUpperCase()}
                         </Badge>
                       </div>
                       <p className="text-muted-foreground mb-2">{doc.description}</p>
@@ -405,19 +428,19 @@ export default function StudentDetailsPage() {
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-6">
             <div className="text-center">
               <div className="text-2xl font-bold text-blue-600">
-                {student.diplomas.length}
+                {student.diplomas?.length}
               </div>
               <div className="text-sm text-muted-foreground">Total Diplomas</div>
             </div>
             <div className="text-center">
               <div className="text-2xl font-bold text-green-600">
-                {student.diplomas.filter(d => d.is_valid).length}
+                {student.diplomas?.filter(d => d.is_valid).length}
               </div>
               <div className="text-sm text-muted-foreground">Valid Diplomas</div>
             </div>
             <div className="text-center">
               <div className="text-2xl font-bold text-orange-600">
-                {student.diplomas.filter(d => d.document).length}
+                {student.diplomas?.filter(d => d.document).length}
               </div>
               <div className="text-sm text-muted-foreground">With Documents</div>
             </div>

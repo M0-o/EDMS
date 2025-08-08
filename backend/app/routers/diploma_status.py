@@ -1,17 +1,10 @@
 from fastapi import APIRouter, Depends, HTTPException
 from app.models.diploma_status import DiplomaStatus
-from app.db import SessionLocal
+from app.db import get_db
 from app.schemas.diploma_status import DiplomaStatusOut
 from sqlalchemy.orm import Session
 
 router = APIRouter()
-
-def get_db():
-    db = SessionLocal()
-    try:
-        yield db
-    finally:
-        db.close()
 
 @router.get("/",response_model= list[DiplomaStatusOut])
 def list_diploma_status(db: Session = Depends(get_db)):

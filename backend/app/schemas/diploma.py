@@ -25,3 +25,16 @@ class DiplomaOut(BaseModel):
 
     class Config:
         from_attributes = True
+
+class DiplomaListOut(BaseModel):
+    id: int
+    student_id: int
+    title: str
+    institution: str
+    issue_date: date
+    is_valid: bool
+    current_status: str = ""
+    created_at: datetime
+
+    class Config:
+        from_attributes = True

@@ -1,60 +1,18 @@
-from fastapi import APIRouter, Depends , File, Form, UploadFile 
+from fastapi import APIRouter, Depends , File, Form, UploadFile , Request , HTTPException   
 from sqlalchemy.orm import Session
-from app.db import SessionLocal
+from app.db import get_db
 from app.models.diploma import Diploma
-from app.schemas.diploma import DiplomaOut
+from app.schemas.diploma import DiplomaOut , DiplomaListOut
 from datetime import date
 import shutil
 from uuid import uuid4
 from pathlib import Path
 from app.models.document import Document
-from fastapi import Request, HTTPException
-from authlib.jose import jwt
-import requests
 from app.models.diploma_status import DiplomaStatus , StatusType
+from app.auth import get_current_user
 
 router = APIRouter()
 
-def get_db():
-    db = SessionLocal()
-    try:
-        yield db
-    finally:
-        db.close()
-
-CLERK_ISSUER = "https://epic-bat-34.clerk.accounts.dev"
-JWKS_URL = f"{CLERK_ISSUER}/.well-known/jwks.json"
-AUDIENCE = "epic-bat-34.clerk.lcl.dev"
-
-
-def verify_token(token: str):
-    jwks = requests.get(JWKS_URL).json()  # Fetch JWK Set
-    claims_options = {
-        "iss": {
-            "essential": True,
-            "values": [CLERK_ISSUER]
-        },
-        "aud": {
-            "essential": True,
-            "values": [AUDIENCE]
-        }
-    }
-    claims = jwt.decode(token, jwks, claims_options=claims_options)  # Decode JWT and validate claims
-    return claims
-
-async def get_current_user(request: Request):
-    auth = request.headers.get("Authorization", "")
-    token = auth.replace("Bearer ", "")
-    if not token:
-        raise HTTPException(status_code=401, detail="Missing token")
-
-    try:
-        claims = verify_token(token)
-    except Exception as e:
-        print("Token verification error:", e)
-        raise HTTPException(status_code=401, detail="Invalid or expired token")
-
-    return claims['sub']  # Return the user ID from the token payload
 
 @router.post("/", response_model=DiplomaOut)
 async def create_diploma(
@@ -86,7 +44,7 @@ async def create_diploma(
         # resolve project root from this file’s location:
         project_root = Path(__file__).resolve().parents[2]
         
-        # save in a folder with the path uploads/[filetype]/[document_type]/[student_id]/year/month/file
+        # save in a folder with the path uploads/[filetype]/[type]/[student_id]/year/month/file
         upload_root   = project_root / "uploads"
         upload_folder = upload_root / file_type / "new_diploma" / str(student_id) / date.today().strftime("%Y/%m")
         upload_folder.mkdir(parents=True, exist_ok=True)
@@ -102,7 +60,7 @@ async def create_diploma(
         #save document information to database
         db_document = Document(
             original_filename=file.filename,
-            document_type="new_diploma",
+            type="new_diploma",
             student_id=student_id,
             file_path=relative_path,
             uploaded_by_clerk_user_id=user_id,  
@@ -123,11 +81,16 @@ async def create_diploma(
 
     return db_diploma
 
-@router.get("/", response_model=list[DiplomaOut])
+@router.get("/", response_model=list[DiplomaListOut])
 def list_diplomas(request: Request, db: Session = Depends(get_db)):
     diplomas = db.query(Diploma).all()
-  
 
     return diplomas
 
-
+@router.get("/{diploma_id}", response_model=DiplomaOut)
+def get_diploma(diploma_id: int, db: Session = Depends(get_db)):
+    diploma = db.query(Diploma).filter(Diploma.id == diploma_id).first()
+    if not diploma:
+        raise HTTPException(status_code=404, detail="Diploma not found")
+    
+    return diploma

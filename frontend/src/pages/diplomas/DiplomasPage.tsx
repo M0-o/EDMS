@@ -9,7 +9,7 @@ import {
 import { z } from "zod"
 
 import type { diplomaSchemaOut } from "@/schemas/diplomaSchemas"
-import { useDiplomaService } from "@/services/DiplomaService"
+import { useDiplomaService } from "@/services/diplomaService"
 import { useEffect, useState } from "react"
 
 export default function Page() {

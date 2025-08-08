@@ -3,6 +3,8 @@ from sqlalchemy.orm import sessionmaker, declarative_base
 import os
 from sqlalchemy.exc import OperationalError
 import time
+from sqlalchemy.orm import sessionmaker, declarative_base
+
 
 DATABASE_URL = os.getenv("DATABASE_URL")
 max_tries = 15
@@ -22,8 +24,14 @@ else:
     print("Could not connect to the database after several attempts. Exiting.")
     exit(1)
 
-# Continue with the rest of your db.py setup
-from sqlalchemy.orm import sessionmaker, declarative_base
+
 
 SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
 Base = declarative_base()
+
+def get_db():
+    db = SessionLocal()
+    try:
+        yield db
+    finally:
+        db.close()

@@ -299,7 +299,7 @@ export default function DiplomaDetailsPage() {
                       <div className="p-2 bg-white border-2 border-gray-200 rounded-full">
                         {getStatusIcon(history.status)}
                       </div>
-                      {index < diploma.status_history?.length - 1 && (
+                      {index < diploma.status_history.length - 1 && (
                         <div className="w-px h-16 bg-gray-200 mt-2" />
                       )}
                     </div>

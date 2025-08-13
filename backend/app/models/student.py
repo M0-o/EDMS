@@ -27,6 +27,9 @@ class Student(Base):
 
     def __repr__(self):
         return f"<Student(id={self.id}, cne='{self.cne}', name='{self.full_name}')>"
+    @property 
+    def verification_documents(self):
+        return filter(lambda doc: doc.type != "new_diploma", self.documents)
     
     @property
     def full_name(self):

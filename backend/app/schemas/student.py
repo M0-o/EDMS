@@ -21,7 +21,7 @@ class StudentOut(BaseModel):
     apogee: str
     email: Optional[str] = None
     diplomas: Optional[list[DiplomaOut]] = None  
-    id_documents: Optional[list[DocumentOut]] = None
+    verification_documents: Optional[list[DocumentOut]] = None
     created_at: datetime
 
     

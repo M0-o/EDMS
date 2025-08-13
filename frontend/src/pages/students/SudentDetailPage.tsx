@@ -9,70 +9,7 @@ import {useStudentService} from "@/services/studentService"
 import {useState , useEffect} from "react"
 import {studentSchemaOut} from "@/schemas/studentSchemas"
 import {z} from "zod"
-// Sample student data based on the provided format
-const studentData = {
-  "id": 1,
-  "first_name": "John",
-  "last_name": "Doe",
-  "cne": "CNE123456789",
-  "apogee": "APG987654321",
-  "email": "john.doe@example.com",
-  "diplomas": [
-    {
-      "id": 2,
-      "student_id": 1,
-      "title": "Bachelor of Computer Science",
-      "institution": "University of Technology",
-      "issue_date": "2025-07-28",
-      "is_valid": true,
-      "document": null,
-      "created_at": "2025-07-28T00:35:45.734839Z"
-    },
-    {
-      "id": 13,
-      "student_id": 1,
-      "title": "Master of Software Engineering",
-      "institution": "EMSI",
-      "issue_date": "2025-08-01",
-      "is_valid": true,
-      "document": {
-        "id": 4,
-        "original_filename": "diploma_certificate.jpg",
-        "type": "new_diploma",
-        "student_id": 1,
-        "diploma_id": 13,
-        "file_path": "jpeg/new_diploma/1/2025/08/518fcc1588764658b65dc36655126a4d.jpg",
-        "download_url": "http://localhost:8000/uploads/jpeg/new_diploma/1/2025/08/518fcc1588764658b65dc36655126a4d.jpg",
-        "uploaded_by_clerk_user_id": "user_30d5G5HS9Xo6TkFysXMtf9bWYhy",
-        "uploaded_at": "2025-08-06T09:50:41.912056Z"
-      },
-      "created_at": "2025-08-06T09:50:41.899917Z"
-    },
-    {
-      "id": 14,
-      "student_id": 1,
-      "title": "Certificate in Data Science",
-      "institution": "Tech Institute",
-      "issue_date": "2025-08-01",
-      "is_valid": false,
-      "document": {
-        "id": 5,
-        "original_filename": "certificate.jpg",
-        "type": "new_diploma",
-        "student_id": 1,
-        "diploma_id": 14,
-        "file_path": "jpeg/new_diploma/1/2025/08/c704467860f34874b0955c36e877a5ca.jpg",
-        "download_url": "http://localhost:8000/uploads/jpeg/new_diploma/1/2025/08/c704467860f34874b0955c36e877a5ca.jpg",
-        "uploaded_by_clerk_user_id": "user_30d5G5HS9Xo6TkFysXMtf9bWYhy",
-        "uploaded_at": "2025-08-06T09:52:21.767539Z"
-      },
-      "created_at": "2025-08-06T09:52:21.753788Z"
-    }
-  ],
-  "created_at": "2025-07-26T04:30:39.491378Z"
-}
 
-// Add verification documents to the student data
 const verificationDocuments = [
   {
     "id": 1,

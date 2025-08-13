@@ -10,6 +10,7 @@ import { Outlet } from 'react-router-dom'
 import { useUser } from '@clerk/clerk-react'
 import StudentDetailsPage from '@/pages/students/SudentDetailPage'
 import DiplomaDetailsPage from '@/pages/diplomas/DiplomaDetailsPage'
+import UpdateDiplomaStatusPage from '@/pages/diplomas/UpdateDiplomaStatus'
 
 function PrivateRoute({ redirectTo = '/login' }: { redirectTo?: string }) {
   const { isSignedIn , isLoaded} = useUser()
@@ -41,6 +42,7 @@ export function AppRoutes() {
           <Route index element={<DiplomasPage />} />
           <Route path=":diplomaId" element={<DiplomaDetailsPage />} />
           <Route path="create" element={<CreateDiplomaPage />} />
+          <Route path=":diplomaId/status" element={<UpdateDiplomaStatusPage  />} />
         </Route>
 
       </Route>

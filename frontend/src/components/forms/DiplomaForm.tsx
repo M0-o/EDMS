@@ -22,12 +22,12 @@ export default function DiplomaForm() {
   const [uploadedFile, setUploadedFile] = useState<File | null>(null)
   const [URLsearchParams, setURLsearchParams] = useSearchParams()
   const diplomaService = useDiplomaService()
-    const initialValues = {
-        student_id: Number(URLsearchParams.get("student_id")) || 0,
-        title: URLsearchParams.get("title") || "",
-        institution: URLsearchParams.get("institution") || "",
-        issue_date: URLsearchParams.get("issue_date") || "",
-    }
+  const initialValues = {
+      student_id: Number(URLsearchParams.get("student_id")) || 0,
+      title: URLsearchParams.get("title") || "",
+      institution: URLsearchParams.get("institution") || "",
+      issue_date: URLsearchParams.get("issue_date") || "",
+  }
   const form = useForm<z.infer<typeof diplomaSchemaCreate>>({
     resolver: zodResolver(diplomaSchemaCreate),
     defaultValues: initialValues,
@@ -61,11 +61,7 @@ useEffect(() => {
 
   async function onSubmit(values: z.infer<typeof diplomaSchemaCreate>) {
     
-    const response = await diplomaService.create(values)
-   
-   
-   
-    console.log(response.status)
+    
     diplomaService.create(values)
       .then((response) => {
         

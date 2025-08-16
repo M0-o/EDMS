@@ -1,4 +1,4 @@
-import { AppSidebar } from "@/components/app-sidebar"
+import { AppSidebar } from "@/components/sidebar/app-sidebar"
 import { StudentsDataTable  } from "@/components/data-table-students"
 import { SiteHeader } from "@/components/site-header"
 import {

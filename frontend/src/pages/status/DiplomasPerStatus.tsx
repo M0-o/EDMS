@@ -11,16 +11,18 @@ import { z } from "zod"
 import type { diplomaSchemaOut } from "@/schemas/diplomaSchemas"
 import { useDiplomaService } from "@/services/diplomaService"
 import { useEffect, useState } from "react"
+import {useParams} from "react-router-dom"
 
-export default function Page() {
-  
+export default function DiplomasPerStatusPage() {
+
     const [data, setData] = useState<z.infer<typeof diplomaSchemaOut>[]>([])
     const diplomaService= useDiplomaService()
+    const { diplomaStatus } = useParams<{ diplomaStatus: string }>()
 
     useEffect(() => {
         const fetchDiplomas = async () => {
             try {
-                const diplomas = await diplomaService.getAll()
+                const diplomas = await diplomaService.getStatus(diplomaStatus)
                 setData(diplomas)
                 console.log("Fetched diplomas:", diplomas)
             } catch (error) {
@@ -29,7 +31,8 @@ export default function Page() {
         }
 
         fetchDiplomas()
-    }, [])
+    }, [diplomaStatus])
+
   return (
     <SidebarProvider
       style={

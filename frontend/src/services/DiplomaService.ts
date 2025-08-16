@@ -87,5 +87,16 @@ export function useDiplomaService() {
     })
     return response.json()
   }
-  return { getAll, create, deleteById , getOne, updateStatus }
+
+  async function getStatus(status: string): Promise<z.infer<typeof diplomaSchemaOut>[]> {
+    const token = await getToken()
+    const response = await fetch(`${API_BASE}/diplomas/status/${status}`, {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    })
+    return response.json()
+  }
+
+  return { getAll, create, deleteById , getOne, updateStatus, getStatus }
 }

@@ -1,5 +1,6 @@
 from fastapi import APIRouter, Depends , File, Form, UploadFile , Request , HTTPException   
 from sqlalchemy.orm import Session
+from sqlalchemy import func
 from app.db import get_db
 from app.models.diploma import Diploma
 from app.schemas.diploma import DiplomaOut , DiplomaListOut
@@ -10,7 +11,7 @@ from pathlib import Path
 from app.models.document import Document
 from app.models.diploma_status import DiplomaStatus , StatusType
 from app.auth import get_current_user
-
+from urllib.parse import unquote_plus
 router = APIRouter()
 
 
@@ -94,3 +95,30 @@ def get_diploma(diploma_id: int, db: Session = Depends(get_db)):
         raise HTTPException(status_code=404, detail="Diploma not found")
     
     return diploma
+
+@router.get("/status/{diploma_status}", response_model=list[DiplomaListOut])
+def get_diplomas_by_status(diploma_status: str, db: Session = Depends(get_db)):
+    decoded_uri_component = unquote_plus(diploma_status)
+    
+    latest_status_subq = (
+        db.query(
+            DiplomaStatus.diploma_id,
+            func.max(DiplomaStatus.date).label('max_date')
+        )
+        .group_by(DiplomaStatus.diploma_id)
+        .subquery()
+    )
+    
+    # Join to get diplomas with the specific status
+    diplomas = (
+        db.query(Diploma)
+        .join(DiplomaStatus, Diploma.id == DiplomaStatus.diploma_id)
+        .join(
+            latest_status_subq,
+            (DiplomaStatus.diploma_id == latest_status_subq.c.diploma_id) &
+            (DiplomaStatus.date == latest_status_subq.c.max_date)
+        )
+        .filter(DiplomaStatus.status == decoded_uri_component)
+        .all()
+    )
+    return diplomas 

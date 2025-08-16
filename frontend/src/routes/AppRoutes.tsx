@@ -11,6 +11,7 @@ import { useUser } from '@clerk/clerk-react'
 import StudentDetailsPage from '@/pages/students/SudentDetailPage'
 import DiplomaDetailsPage from '@/pages/diplomas/DiplomaDetailsPage'
 import UpdateDiplomaStatusPage from '@/pages/diplomas/UpdateDiplomaStatus'
+import DiplomasPerStatusPage from '@/pages/status/DiplomasPerStatus'
 
 function PrivateRoute({ redirectTo = '/login' }: { redirectTo?: string }) {
   const { isSignedIn , isLoaded} = useUser()
@@ -25,23 +26,24 @@ export function AppRoutes() {
   return (
     <Routes>
       {/* Public routes */}
-      <Route path="/login" element={<LoginPage />} />
+      <Route path="login" element={<LoginPage />} />
       
       {/* Main app routes */}
       <Route element={<PrivateRoute />}>
 
-        <Route path="/" element={<HomePage />} />
+        <Route index element={<HomePage />} />
         
-        <Route path="/students">
+        <Route path="students" element={<Outlet />}>
           <Route index element={<StudentsPage />} />
           <Route path=":studentId" element={<StudentDetailsPage />} />
           <Route path="create" element={<CreateStudentPage />} />
         </Route>
 
-        <Route path="/diplomas">
+        <Route path="diplomas" element={<Outlet />}>
           <Route index element={<DiplomasPage />} />
-          <Route path=":diplomaId" element={<DiplomaDetailsPage />} />
           <Route path="create" element={<CreateDiplomaPage />} />
+          <Route path="status/:diplomaStatus" element={<DiplomasPerStatusPage />} />
+          <Route path=":diplomaId" element={<DiplomaDetailsPage />} />
           <Route path=":diplomaId/status" element={<UpdateDiplomaStatusPage  />} />
         </Route>
 
@@ -49,7 +51,7 @@ export function AppRoutes() {
       {/* Redirect root to home */}
       
       {/* Redirect */}
-      <Route path="/dashboard" element={<Navigate to="/" replace />} />
+      <Route path="dashboard" element={<Navigate to="/" replace />} />
       
       {/* 404 */}
       <Route path="*" element={<NotFoundPage />} />

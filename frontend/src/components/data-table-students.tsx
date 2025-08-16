@@ -151,6 +151,11 @@ const studentColumns: ColumnDef<z.infer<typeof studentSchema>>[] = [
   {
     accessorKey: "first_name",
     header: "First Name",
+    cell: ({ row }) => (
+      <Link to={`/students/${row.original.id}`}>
+        {row.getValue("first_name")}
+      </Link>
+    ),
   },
   {
     accessorKey: "last_name", 

@@ -6,7 +6,7 @@ export default function BatchUpdateDiplomaStatusPage() {
   const { diplomaIds } = useParams()
 
   if (!diplomaIds) {
-    return <div>Error: Diploma IDDs are required</div>
+    return <div>Error: Diploma IDs are required</div>
   }
 
   return (

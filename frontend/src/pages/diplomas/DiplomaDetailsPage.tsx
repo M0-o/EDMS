@@ -95,25 +95,67 @@ function getStatusBadge(status: string) {
           En Attente
         </Badge>
       )
-    case 'en cours de vérification':
+    case 'envoyé à la présidence':
       return (
         <Badge variant="secondary" className="bg-blue-100 text-blue-800 hover:bg-blue-100">
           <AlertCircle className="h-3 w-3 mr-1" />
-          En Cours de Vérification
+          Envoyé à la Présidence
         </Badge>
       )
-    case 'validé':
+    case 'arrivé à la présidence':
+      return (
+        <Badge variant="secondary" className="bg-blue-200 text-blue-900 hover:bg-blue-200">
+          <CheckCircle className="h-3 w-3 mr-1" />
+          Arrivé à la Présidence
+        </Badge>
+      )
+    case 'envoyé à l\'établissement':
+      return (
+        <Badge variant="secondary" className="bg-purple-100 text-purple-800 hover:bg-purple-100">
+          <AlertCircle className="h-3 w-3 mr-1" />
+          Envoyé à l'Établissement
+        </Badge>
+      )
+    case 'arrivé à l\'établissement':
+      return (
+        <Badge variant="secondary" className="bg-purple-200 text-purple-900 hover:bg-purple-200">
+          <CheckCircle className="h-3 w-3 mr-1" />
+          Arrivé à l'Établissement
+        </Badge>
+      )
+    case 'correction requise':
+      return (
+        <Badge variant="destructive" className="bg-orange-100 text-orange-800 hover:bg-orange-100">
+          <XCircle className="h-3 w-3 mr-1" />
+          Correction Requise
+        </Badge>
+      )
+    case 'renvoyé après correction':
+      return (
+        <Badge variant="secondary" className="bg-indigo-100 text-indigo-800 hover:bg-indigo-100">
+          <AlertCircle className="h-3 w-3 mr-1" />
+          Renvoyé après Correction
+        </Badge>
+      )
+    case 'signé par le président':
+      return (
+        <Badge variant="default" className="bg-emerald-100 text-emerald-800 hover:bg-emerald-100">
+          <CheckCircle className="h-3 w-3 mr-1" />
+          Signé par le Président
+        </Badge>
+      )
+    case 'prêt':
       return (
         <Badge variant="default" className="bg-green-100 text-green-800 hover:bg-green-100">
           <CheckCircle className="h-3 w-3 mr-1" />
-          Validé
+          Prêt
         </Badge>
       )
-    case 'rejeté':
+    case 'délivré':
       return (
-        <Badge variant="destructive">
-          <XCircle className="h-3 w-3 mr-1" />
-          Rejeté
+        <Badge variant="default" className="bg-green-200 text-green-900 hover:bg-green-200">
+          <CheckCircle className="h-3 w-3 mr-1" />
+          Délivré
         </Badge>
       )
     default:
@@ -129,12 +171,24 @@ function getStatusIcon(status: string) {
   switch (status.toLowerCase()) {
     case 'en attente':
       return <Clock className="h-4 w-4 text-yellow-600" />
-    case 'en cours de vérification':
+    case 'envoyé à la présidence':
       return <AlertCircle className="h-4 w-4 text-blue-600" />
-    case 'validé':
+    case 'arrivé à la présidence':
+      return <CheckCircle className="h-4 w-4 text-blue-700" />
+    case 'envoyé à l\'établissement':
+      return <AlertCircle className="h-4 w-4 text-purple-600" />
+    case 'arrivé à l\'établissement':
+      return <CheckCircle className="h-4 w-4 text-purple-700" />
+    case 'correction requise':
+      return <XCircle className="h-4 w-4 text-orange-600" />
+    case 'renvoyé après correction':
+      return <AlertCircle className="h-4 w-4 text-indigo-600" />
+    case 'signé par le président':
+      return <CheckCircle className="h-4 w-4 text-emerald-600" />
+    case 'prêt':
       return <CheckCircle className="h-4 w-4 text-green-600" />
-    case 'rejeté':
-      return <XCircle className="h-4 w-4 text-red-600" />
+    case 'délivré':
+      return <CheckCircle className="h-4 w-4 text-green-700" />
     default:
       return <Clock className="h-4 w-4 text-gray-600" />
   }

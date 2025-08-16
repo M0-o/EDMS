@@ -115,7 +115,9 @@ const diplomaColumns: ColumnDef<z.infer<typeof diplomaSchemaOut>>[] = [
     header: "Diploma Title",
     cell: ({ row }) => (
       <div className="max-w-[300px] truncate" title={row.getValue("title")}>
-        {row.getValue("title")}
+        <Link to={`/diplomas/${row.original.id}`}>
+          {row.getValue("title")}
+        </Link>
       </div>
     ),
   },

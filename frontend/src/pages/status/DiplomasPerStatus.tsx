@@ -22,7 +22,7 @@ export default function DiplomasPerStatusPage() {
     useEffect(() => {
         const fetchDiplomas = async () => {
             try {
-                const diplomas = await diplomaService.getStatus(diplomaStatus)
+                const diplomas = await diplomaService.getByStatus(diplomaStatus)
                 setData(diplomas)
                 console.log("Fetched diplomas:", diplomas)
             } catch (error) {

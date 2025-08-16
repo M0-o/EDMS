@@ -236,7 +236,7 @@ export function DiplomasDataTable({
 
   const dataIds = React.useMemo<UniqueIdentifier[]>(() => data?.map(({ id }) => id) || [], [data])
 
-  const table = useReactTable({
+  const table =  useReactTable({
     data,
     columns: diplomaColumns,
     state: {
@@ -260,8 +260,7 @@ export function DiplomasDataTable({
     getFacetedRowModel: getFacetedRowModel(),
     getFacetedUniqueValues: getFacetedUniqueValues(),
   })
-
-  function handleDragEnd(event: DragEndEvent) {
+  const handleDragEnd = React.useCallback((event: DragEndEvent) => {
     const { active, over } = event
     if (active && over && active.id !== over.id) {
       setData((data) => {
@@ -270,7 +269,7 @@ export function DiplomasDataTable({
         return arrayMove(data, oldIndex, newIndex)
       })
     }
-  }
+  }, [dataIds])
 
      const handleSearch = React.useMemo(
       () =>
@@ -342,6 +341,14 @@ export function DiplomasDataTable({
               <Plus className="h-4 w-4" />
               <span><Link to="/diplomas/create">Add Diploma</Link></span>
             </Button>
+            {
+              (Object.keys(rowSelection).length != 0 ) && <Button variant="outline" size="sm">
+              <Plus className="h-4 w-4" />
+              <span><Link to={`/diplomas/batchUpdateStatus/${encodeURIComponent(JSON.stringify(
+                Object.keys(rowSelection)))}`}>Change Status</Link></span>
+            </Button>
+            }
+            
           </div>
         </div>
 

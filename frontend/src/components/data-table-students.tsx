@@ -278,6 +278,7 @@ export function StudentsDataTable({ pdata }: { pdata: z.infer<typeof studentSche
     getFacetedRowModel: getFacetedRowModel(),
     getFacetedUniqueValues: getFacetedUniqueValues(),
   })
+
 function handleDragEnd(event: DragEndEvent) {
     const { active, over } = event
     if (active && over && active.id !== over.id) {

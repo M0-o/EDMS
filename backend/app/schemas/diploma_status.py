@@ -15,7 +15,9 @@ class DiplomaStatusBase(BaseModel):
 class DiplomaStatusCreate(DiplomaStatusBase):
     diploma_id: int
     
-
+class BatchDiplomaStatusCreate(DiplomaStatusBase):
+    diploma_ids: list[int]
+    
 # For returning diploma status
 class DiplomaStatusOut(DiplomaStatusBase):
     id: int

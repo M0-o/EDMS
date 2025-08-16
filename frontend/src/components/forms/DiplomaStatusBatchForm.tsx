@@ -26,7 +26,7 @@ import {
   CheckSquare,
 } from "lucide-react"
 
-import { diplomaStatusCreateSchema } from "@/schemas/diplomaStatusSchemas"
+import { batchDiplomaStatusCreateSchema } from "@/schemas/diplomaStatusSchemas"
 import { useDiplomaService } from "@/services/diplomaService"
 
 // Status options based on the enum
@@ -44,33 +44,31 @@ const statusOptions = [
 ]
 
 interface DiplomaStatusFormProps {
-  diplomaId: number
- 
+  diplomaIds: number[]
 }
 
 
 
-export default function DiplomaStatusForm({
-  diplomaId,
-
+export default function BatchDiplomaStatusForm({
+  diplomaIds
 }: DiplomaStatusFormProps) {
 
   const [URLsearchParams, setURLsearchParams] = useSearchParams()
   const diplomaService = useDiplomaService()
   
-  const form = useForm<z.infer<typeof diplomaStatusCreateSchema>>({
-    resolver: zodResolver(diplomaStatusCreateSchema),
+  const form = useForm<z.infer<typeof batchDiplomaStatusCreateSchema>>({
+    resolver: zodResolver(batchDiplomaStatusCreateSchema),
     defaultValues: {
       status: URLsearchParams.get("status") || "",
       reason: URLsearchParams.get("reason") || "",
       notes: URLsearchParams.get("notes") || "",
-      diploma_id: diplomaId,
+      diploma_ids: diplomaIds,
     },
   })
 
   const debouncedUpdateParams  = useMemo(
     () =>
-      debounce((value: z.infer<typeof diplomaStatusCreateSchema >) => {
+      debounce((value: z.infer<typeof batchDiplomaStatusCreateSchema >) => {
         setURLsearchParams(
           () => {
             const newParams = new URLSearchParams()
@@ -97,12 +95,10 @@ export default function DiplomaStatusForm({
  }, [form, debouncedUpdateParams])
 
 
- async function onFormSubmit(data: z.infer<typeof diplomaStatusCreateSchema>) {
+ async function onFormSubmit(data: z.infer<typeof batchDiplomaStatusCreateSchema>) {
     
   
-  const response = await diplomaService.updateStatus(data)
-
-  
+  const response = await diplomaService.batchUpdateStatus(data)
 
   }
 
@@ -116,9 +112,9 @@ export default function DiplomaStatusForm({
           <FileText className="h-5 w-5" />
           Update Diploma Status
         </CardTitle>
-        
-        <CardDescription>Update the status for diploma ID: {diplomaId }</CardDescription>
-        
+
+        <CardDescription>Update the status for diploma IDs: {JSON.stringify(diplomaIds)}</CardDescription>
+
       </CardHeader>
       <CardContent>
         <Form {...form}>
@@ -208,8 +204,8 @@ export default function DiplomaStatusForm({
             {/* Hidden Diploma ID Field (for reference) */}
             <div className="bg-gray-50 p-3 rounded-lg">
               <div className="flex items-center justify-between text-sm">
-                <span className="text-muted-foreground">Diploma ID:</span>
-                <span className="font-medium">{diplomaId}</span>
+                <span className="text-muted-foreground">Diploma IDs:</span>
+                <span className="font-medium">{JSON.stringify(diplomaIds)}</span>
               </div>
             </div>
 

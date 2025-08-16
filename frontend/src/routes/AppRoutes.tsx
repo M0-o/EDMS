@@ -12,11 +12,12 @@ import StudentDetailsPage from '@/pages/students/SudentDetailPage'
 import DiplomaDetailsPage from '@/pages/diplomas/DiplomaDetailsPage'
 import UpdateDiplomaStatusPage from '@/pages/diplomas/UpdateDiplomaStatus'
 import DiplomasPerStatusPage from '@/pages/status/DiplomasPerStatus'
+import BatchUpdateDiplomaStatusPage from '@/pages/diplomas/BatchUpdateDiplomaStatusPage'
 
 function PrivateRoute({ redirectTo = '/login' }: { redirectTo?: string }) {
   const { isSignedIn , isLoaded} = useUser()
  if (!isLoaded) {
-    return null   // or a spinner
+    return null   
   }
   return isSignedIn ? <Outlet /> : <Navigate to={redirectTo} replace />
 }
@@ -44,7 +45,8 @@ export function AppRoutes() {
           <Route path="create" element={<CreateDiplomaPage />} />
           <Route path="status/:diplomaStatus" element={<DiplomasPerStatusPage />} />
           <Route path=":diplomaId" element={<DiplomaDetailsPage />} />
-          <Route path=":diplomaId/status" element={<UpdateDiplomaStatusPage  />} />
+          <Route path=":diplomaId/updateStatus" element={<UpdateDiplomaStatusPage  />} />
+          <Route path="batchUpdateStatus/:diplomaIds" element={<BatchUpdateDiplomaStatusPage />} />
         </Route>
 
       </Route>

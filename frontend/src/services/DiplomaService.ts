@@ -2,6 +2,8 @@ import type z from "zod"
 import { diplomaSchemaOut, diplomaSchemaCreate } from "@/schemas/diplomaSchemas"
 import { useAuth} from "@clerk/clerk-react"
 import { diplomaStatusCreateSchema } from "@/schemas/diplomaStatusSchemas"
+import { batchDiplomaStatusCreateSchema } from "@/schemas/diplomaStatusSchemas"
+
 const API_BASE = 'http://localhost:8000'
 
 
@@ -75,20 +77,20 @@ export function useDiplomaService() {
     return response.json()
   }
   
-  async function updateStatusBatch(ids: number[], status: string){
+  async function batchUpdateStatus(newStatus: z.infer<typeof batchDiplomaStatusCreateSchema>) {
     const token = await getToken()
-    const response = await fetch(`${API_BASE}/diploma_status/batch/${status}`, {
+    const response = await fetch(`${API_BASE}/diploma_status/batch`, {
       method: 'POST',
       headers: {
         Authorization: `Bearer ${token}`,
         'Content-Type': 'application/json',
       },
-      body: JSON.stringify({ ids }),
+      body: JSON.stringify(newStatus),
     })
     return response.json()
   }
 
-  async function getStatus(status: string): Promise<z.infer<typeof diplomaSchemaOut>[]> {
+  async function getByStatus(status: string): Promise<z.infer<typeof diplomaSchemaOut>[]> {
     const token = await getToken()
     const response = await fetch(`${API_BASE}/diplomas/status/${status}`, {
       headers: {
@@ -98,5 +100,5 @@ export function useDiplomaService() {
     return response.json()
   }
 
-  return { getAll, create, deleteById , getOne, updateStatus, getStatus }
+  return { getAll, create, deleteById , getOne, updateStatus, getByStatus , batchUpdateStatus }
 }

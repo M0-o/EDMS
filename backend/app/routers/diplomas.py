@@ -5,15 +5,13 @@ from app.db import get_db
 from app.models.diploma import Diploma
 from app.schemas.diploma import DiplomaOut , DiplomaListOut
 from datetime import date
-import shutil
-from uuid import uuid4
-from pathlib import Path
 from app.models.document import Document
 from app.models.diploma_status import DiplomaStatus , StatusType
 from app.auth import get_current_user
 from urllib.parse import unquote_plus
-router = APIRouter()
+from app.utils import save_file_to_disc
 
+router = APIRouter()
 
 @router.post("/", response_model=DiplomaOut)
 async def create_diploma(
@@ -39,25 +37,8 @@ async def create_diploma(
 
     # now handle the uploaded file if present
     if file:
-        # pick sub-folder by MIME subtype (e.g. “pdf”, “png”)
-        file_type = file.content_type.split("/")[-1] or "misc"
-
-        # resolve project root from this file’s location:
-        project_root = Path(__file__).resolve().parents[2]
         
-        # save in a folder with the path uploads/[filetype]/[type]/[student_id]/year/month/file
-        upload_root   = project_root / "uploads"
-        upload_folder = upload_root / file_type / "new_diploma" / str(student_id) / date.today().strftime("%Y/%m")
-        upload_folder.mkdir(parents=True, exist_ok=True)
-
-        ext      = Path(file.filename).suffix
-        filename = f"{uuid4().hex}{ext}"
-        dest     = upload_folder / filename
-
-        with dest.open("wb") as out:
-            shutil.copyfileobj(file.file, out)
-
-        relative_path = str(dest.relative_to(upload_root))
+        relative_path = save_file_to_disc(student_id, file, "diploma")
         #save document information to database
         db_document = Document(
             original_filename=file.filename,

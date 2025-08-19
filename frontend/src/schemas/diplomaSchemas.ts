@@ -2,6 +2,7 @@
 import { z } from "zod"
 import { documentSchemaOut } from "./documentSchemas"
 import { diplomaStatusOutSchema } from "./diplomaStatusSchemas"
+
 export const diplomaSchemaCreate = z.object({
   student_id: z.number().int().positive("Student ID must be a positive integer"),
   title: z.string().min(1, "Title is required"),

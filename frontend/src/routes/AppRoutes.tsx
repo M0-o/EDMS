@@ -13,6 +13,7 @@ import DiplomaDetailsPage from '@/pages/diplomas/DiplomaDetailsPage'
 import UpdateDiplomaStatusPage from '@/pages/diplomas/UpdateDiplomaStatus'
 import DiplomasPerStatusPage from '@/pages/status/DiplomasPerStatus'
 import BatchUpdateDiplomaStatusPage from '@/pages/diplomas/BatchUpdateDiplomaStatusPage'
+import UploadDocumentPage from '@/pages/documents/UploadDocumentPage'
 
 function PrivateRoute({ redirectTo = '/login' }: { redirectTo?: string }) {
   const { isSignedIn , isLoaded} = useUser()
@@ -51,7 +52,7 @@ export function AppRoutes() {
 
       </Route>
       {/* Redirect root to home */}
-      
+      <Route path="verification-documents" element={<UploadDocumentPage />} />
       {/* Redirect */}
       <Route path="dashboard" element={<Navigate to="/" replace />} />
       

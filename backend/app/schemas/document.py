@@ -2,13 +2,7 @@ from pydantic import BaseModel , HttpUrl
 from datetime import datetime
 from enum import Enum
 from typing import Optional
-
-class DocumentTypeEnum(str, Enum):
-    id_card           = "id_card"
-    previous_diploma  = "previous_diploma"
-    new_diploma       = "new_diploma"
-    transcript        = "transcript"
-    other             = "other"
+from  app.models.document import DocumentTypeEnum
 
 class DocumentCreate(BaseModel):
     original_filename: str

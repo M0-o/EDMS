@@ -14,17 +14,18 @@ const API_BASE = 'http://localhost:8000'
 export function useVerificationDocumentsService() {
   const { getToken } = useAuth()
 
-  async function uploadDocuments( files: DocumentFiles) {
+  async function uploadDocuments( studentId: string, files: DocumentFiles ) {
     const token = await getToken()
     const formData = new FormData()
 
+    formData.append('student_id', studentId)
     Object.entries(files).forEach(([key, file]) => {
       if (file) {
         formData.append(key, file)
       }
     })
 
-    const response = await fetch(`${API_BASE}/verification-documents`, {
+    const response = await fetch(`${API_BASE}/documents`, {
       method: 'POST',
       headers: {
         Authorization: `Bearer ${token}`,

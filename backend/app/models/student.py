@@ -2,6 +2,8 @@ from sqlalchemy import Column, Integer, String, Date, Boolean, DateTime
 from sqlalchemy.sql import func
 from app.db import Base
 from sqlalchemy.orm import relationship 
+from app.models.document import DocumentTypeEnum
+
 
 class Student(Base):
     __tablename__ = "students"
@@ -30,6 +32,10 @@ class Student(Base):
     @property 
     def verification_documents(self):
         return filter(lambda doc: doc.type != "new_diploma", self.documents)
+    @property
+    def id_documents(self):
+        # return only non new_diploma documents
+        return [d for d in self.documents if d.type != DocumentTypeEnum.new_diploma]
     
     @property
     def full_name(self):

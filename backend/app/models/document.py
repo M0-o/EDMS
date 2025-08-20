@@ -5,11 +5,12 @@ from app.db import Base
 import enum 
 
 class DocumentTypeEnum(str, enum.Enum):
-    id_card           = "id_card"
-    previous_diploma  = "previous_diploma"
     new_diploma       = "new_diploma"
-    transcript        = "transcript"
-    other             = "other"
+    carte_identite    = "carte_identite"
+    baccalaureat      = "baccalaureat"
+    diplome_bac2      = "diplome_bac2"
+    diplome_bac3      = "diplome_bac3"
+    releve_notes      = "releve_notes"
 
 class Document(Base):
     __tablename__ = "documents"
@@ -31,17 +32,14 @@ class Document(Base):
         back_populates="documents",
         foreign_keys=[student_id]
     )
+    
     diploma = relationship(
         "Diploma",
         back_populates="document",
         uselist=False,
     )
 
-    @property
-    def id_documents(self):
-        # return only non new_diploma documents
-        return [d for d in self.documents if d.type != DocumentTypeEnum.new_diploma]
-    
+   
     @property
     def download_url(self) -> str:
     # this assumes you mounted StaticFiles at "/uploads" pointing at your "uploads/" folder

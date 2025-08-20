@@ -1,13 +1,10 @@
 from fastapi import FastAPI
 from app.routers import diplomas , students , documents , diploma_status
-from app.models.diploma import Diploma
-from app.models.student import Student
-from app.models.document import Document
-from app.models.diploma_status import DiplomaStatus
 from app.db import Base, engine
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.staticfiles import StaticFiles
 from dotenv import load_dotenv
+import ssl 
 
 load_dotenv() 
 app = FastAPI()
@@ -23,6 +20,10 @@ app.add_middleware(
     allow_methods=["*"],        # GET, POST, PUT, DELETE, etc.
     allow_headers=["*"],        # Authorization, Content-Type, etc.
 )
+
+ssl_context = ssl.create_default_context()
+ssl_context.check_hostname = False
+ssl_context.verify_mode = ssl.CERT_NONE
 
 app.mount("/uploads", StaticFiles(directory="uploads"), name="uploads")
 

@@ -52,7 +52,7 @@ export function AppRoutes() {
 
       </Route>
       {/* Redirect root to home */}
-      <Route path="verification-documents" element={<UploadDocumentPage />} />
+      <Route path="verification-documents/:studentId" element={<UploadDocumentPage />} />
       {/* Redirect */}
       <Route path="dashboard" element={<Navigate to="/" replace />} />
       

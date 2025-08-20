@@ -38,7 +38,7 @@ async def create_diploma(
     # now handle the uploaded file if present
     if file:
         
-        relative_path = save_file_to_disc(student_id, file, "diploma")
+        relative_path = save_file_to_disc(student_id, file, "new_diploma")
         #save document information to database
         db_document = Document(
             original_filename=file.filename,

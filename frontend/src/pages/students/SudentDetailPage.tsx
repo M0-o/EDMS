@@ -10,80 +10,6 @@ import {useState , useEffect} from "react"
 import {studentSchemaOut} from "@/schemas/studentSchemas"
 import {z} from "zod"
 
-const verificationDocuments = [
-  {
-    "id": 1,
-    "student_id": 1,
-    "type": "high_school_diploma",
-    "title": "High School Diploma",
-    "description": "Baccalauréat Sciences Mathématiques",
-    "institution": "Lycée Mohammed V",
-    "issue_date": "2020-06-15",
-    "is_verified": true,
-    "document": {
-      "id": 20,
-      "original_filename": "bac_diploma.pdf",
-      "file_path": "pdf/verification/1/2025/07/bac_diploma_verified.pdf",
-      "download_url": "http://localhost:8000/uploads/pdf/verification/1/2025/07/bac_diploma_verified.pdf",
-      "uploaded_at": "2025-07-26T10:15:30.123456Z"
-    },
-    "created_at": "2025-07-26T10:15:30.123456Z"
-  },
-  {
-    "id": 2,
-    "student_id": 1,
-    "type": "national_id",
-    "title": "National ID Card",
-    "description": "Carte d'Identité Nationale",
-    "institution": "Ministry of Interior",
-    "issue_date": "2023-03-10",
-    "is_verified": true,
-    "document": {
-      "id": 21,
-      "original_filename": "cin_front_back.jpg",
-      "file_path": "jpeg/verification/1/2025/07/cin_verified.jpg",
-      "download_url": "http://localhost:8000/uploads/jpeg/verification/1/2025/07/cin_verified.jpg",
-      "uploaded_at": "2025-07-26T10:20:45.789012Z"
-    },
-    "created_at": "2025-07-26T10:20:45.789012Z"
-  },
-  {
-    "id": 3,
-    "student_id": 1,
-    "type": "previous_diploma",
-    "title": "Bachelor's Degree Certificate",
-    "description": "Licence en Informatique",
-    "institution": "Université Hassan II",
-    "issue_date": "2023-07-20",
-    "is_verified": true,
-    "document": {
-      "id": 22,
-      "original_filename": "licence_certificate.pdf",
-      "file_path": "pdf/verification/1/2025/07/licence_verified.pdf",
-      "download_url": "http://localhost:8000/uploads/pdf/verification/1/2025/07/licence_verified.pdf",
-      "uploaded_at": "2025-07-26T10:25:15.345678Z"
-    },
-    "created_at": "2025-07-26T10:25:15.345678Z"
-  },
-  {
-    "id": 4,
-    "student_id": 1,
-    "type": "transcript",
-    "title": "Academic Transcript",
-    "description": "Official transcript from previous institution",
-    "institution": "Université Hassan II",
-    "issue_date": "2023-07-25",
-    "is_verified": false,
-    "document": {
-      "id": 23,
-      "original_filename": "transcript_official.pdf",
-      "file_path": "pdf/verification/1/2025/07/transcript_pending.pdf",
-      "download_url": "http://localhost:8000/uploads/pdf/verification/1/2025/07/transcript_pending.pdf",
-      "uploaded_at": "2025-07-26T10:30:20.567890Z"
-    },
-    "created_at": "2025-07-26T10:30:20.567890Z"
-  }
-]
 
 function formatDate(dateString: string) {
   return new Date(dateString).toLocaleDateString('en-US', {
@@ -277,12 +203,13 @@ export default function StudentDetailsPage() {
       </div>
 
       {/* Verification Documents Section */}
+      {(student.verification_documents) && (student.verification_documents.length > 0) && (
       <div className="mb-8">
         <div className="flex items-center gap-2 mb-6">
           <FileText className="h-6 w-6" />
           <h2 className="text-2xl font-bold">Verification Documents</h2>
           <Badge variant="secondary" className="ml-2">
-            {verificationDocuments.length} Documents
+            {student.verification_documents.length} Documents
           </Badge>
         </div>
         <p className="text-muted-foreground mb-6">
@@ -290,7 +217,7 @@ export default function StudentDetailsPage() {
         </p>
 
         <div className="grid gap-4">
-          {verificationDocuments.map((doc) => (
+          {student.verification_documents.map((doc) => (
             <Card key={doc.id} className="relative">
               <CardContent className="p-6">
                 <div className="flex items-start justify-between">
@@ -300,7 +227,7 @@ export default function StudentDetailsPage() {
                     </div>
                     <div className="flex-1">
                       <div className="flex items-center gap-2 mb-2">
-                        <h3 className="font-semibold text-lg">{doc.title}</h3>
+                        <h3 className="font-semibold text-lg">{doc.type}</h3>
                         <Badge className={getDocumentTypeBadgeColor(doc.type)}>
                           {doc.type.replace('_', ' ').toUpperCase()}
                         </Badge>
@@ -309,40 +236,29 @@ export default function StudentDetailsPage() {
                       <div className="flex items-center gap-4 text-sm text-muted-foreground mb-3">
                         <div className="flex items-center gap-1">
                           <Building2 className="h-4 w-4" />
-                          <span>{doc.institution}</span>
+                          
                         </div>
                         <div className="flex items-center gap-1">
                           <CalendarDays className="h-4 w-4" />
-                          <span>Issued: {formatDate(doc.issue_date)}</span>
+                          <span>Uploaded: {formatDate(doc.uploaded_at)}</span>
                         </div>
                       </div>
-                      {doc.document && (
+                      {doc && (
                         <div className="flex items-center gap-2 text-sm">
                           <FileText className="h-4 w-4 text-muted-foreground" />
                           <span className="text-muted-foreground">
-                            {doc.document.original_filename} • Uploaded: {formatDate(doc.document.uploaded_at)}
+                            {doc.original_filename} • Uploaded: {formatDate(doc.uploaded_at)}
                           </span>
                         </div>
                       )}
                     </div>
                   </div>
                   <div className="flex items-center gap-2">
-                    {doc.is_verified ? (
-                      <Badge variant="default" className="bg-green-100 text-green-800 hover:bg-green-100">
-                        <CheckCircle className="h-3 w-3 mr-1" />
-                        Verified
-                      </Badge>
-                    ) : (
-                      <Badge variant="secondary" className="bg-yellow-100 text-yellow-800 hover:bg-yellow-100">
-                        <XCircle className="h-3 w-3 mr-1" />
-                        Pending
-                      </Badge>
-                    )}
-                    {doc.document && (
+                    {doc && (
                       <Button 
                         variant="outline" 
                         size="sm"
-                        onClick={() => window.open(doc.document?.download_url, '_blank')}
+                        onClick={() => window.open(doc.download_url, '_blank')}
                       >
                         <Download className="h-4 w-4 mr-2" />
                         Download
@@ -355,7 +271,7 @@ export default function StudentDetailsPage() {
           ))}
         </div>
       </div>
-
+)}
       {/* Summary Stats */}
       <Card>
         <CardHeader>
@@ -381,18 +297,20 @@ export default function StudentDetailsPage() {
               </div>
               <div className="text-sm text-muted-foreground">With Documents</div>
             </div>
-            <div className="text-center">
+            {(student.verification_documents) && (student.verification_documents.length > 0) && (
+            <><div className="text-center">
               <div className="text-2xl font-bold text-purple-600">
-                {verificationDocuments.length}
+                {student.verification_documents.length}
               </div>
               <div className="text-sm text-muted-foreground">Verification Docs</div>
             </div>
             <div className="text-center">
               <div className="text-2xl font-bold text-emerald-600">
-                {verificationDocuments.filter(d => d.is_verified).length}
+                {student.verification_documents.filter(d => d.is_verified).length}
               </div>
               <div className="text-sm text-muted-foreground">Verified Docs</div>
-            </div>
+            </div></>)
+}
           </div>
         </CardContent>
       </Card>

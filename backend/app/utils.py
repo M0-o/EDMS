@@ -8,7 +8,7 @@ def save_file_to_disc(student_id ,file ,document_type:str):
     file_type = file.content_type.split("/")[-1] or "misc"
 
     # resolve project root from this file’s location:
-    project_root = Path(__file__).resolve().parents[2]
+    project_root = Path(__file__).resolve().parents[1]
     
     # save in a folder with the path uploads/[filetype]/[type]/[student_id]/year/month/file
     upload_root   = project_root / "uploads"

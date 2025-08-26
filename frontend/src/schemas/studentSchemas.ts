@@ -1,5 +1,6 @@
 import { z } from "zod"
 import { diplomaSchemaOut } from "./diplomaSchemas"
+import { documentSchemaOut } from "./documentSchemas"
 
 export const studentSchemaCreate = z.object({
   first_name: z.string().min(1, "First name is required").min(2, "First name must be at least 2 characters"),
@@ -18,6 +19,7 @@ export const studentSchemaCreate = z.object({
 export const studentSchemaOut = studentSchemaCreate.extend({
   id: z.number(),
   diplomas: z.array(diplomaSchemaOut).optional(),
+  verification_documents : z.array(documentSchemaOut).optional(),
   created_at: z.string(),
 })
 

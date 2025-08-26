@@ -8,4 +8,4 @@
 [*] add persisting form inputs , filters , search bars on all pages to the url for better ux
 [*] add the ability to add status updates in batches 
 [*] add the ability to add a status update for a single diploma
-[] add form for uploading verification documents 
+[*] add form for uploading verification documents 

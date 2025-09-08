@@ -103,3 +103,12 @@ def get_diplomas_by_status(diploma_status: str, db: Session = Depends(get_db)):
         .all()
     )
     return diplomas 
+
+@router.delete("/{diploma_id}", response_model=DiplomaOut)
+def delete_diploma(diploma_id: int, db: Session = Depends(get_db)):
+    diploma = db.query(Diploma).filter(Diploma.id == diploma_id).first()
+    if not diploma:
+        raise HTTPException(status_code=404, detail="Diploma not found")
+    db.delete(diploma)
+    db.commit()
+    return diploma

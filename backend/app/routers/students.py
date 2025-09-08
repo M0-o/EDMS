@@ -4,6 +4,7 @@ from app.db import get_db
 from app.models.student import Student
 from app.schemas.student import StudentCreate, StudentOut , StudentListOut
 
+
 router = APIRouter()
 
 @router.post("/", response_model=StudentOut)
@@ -24,4 +25,25 @@ def get_student(student_id: int, db: Session = Depends(get_db)):
     student = db.query(Student).filter(Student.id == student_id).first()
     if not student:
         raise HTTPException(status_code=404, detail="Student not found")
+    return student
+
+@router.get("/{student_id}/minimal")
+def get_student_minimal(student_id: int, db: Session = Depends(get_db)):
+    student = db.query(Student).filter(Student.id == student_id).first()
+    if not student:
+        raise HTTPException(status_code=404, detail="Student not found")
+    return {
+        "id": student.id,
+        "first_name": student.first_name,
+        "last_name": student.last_name,
+        "email": student.email
+   }
+
+@router.delete("/{student_id}", response_model=StudentOut)
+def delete_student(student_id: int, db: Session = Depends(get_db)):
+    student = db.query(Student).filter(Student.id == student_id).first()
+    if not student:
+        raise HTTPException(status_code=404, detail="Student not found")
+    db.delete(student)
+    db.commit()
     return student

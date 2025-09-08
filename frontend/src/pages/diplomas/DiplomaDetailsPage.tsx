@@ -9,64 +9,7 @@ import { useEffect, useState } from 'react'
 import { useDiplomaService } from "@/services/diplomaService"
 import { z } from "zod"
 import { diplomaSchemaOut } from "@/schemas/diplomaSchemas"
-
-const diplomaData = {
-  "id": 24,
-  "student_id": 3,
-  "title": "Master of Computer Science",
-  "institution": "École Nationale Supérieure d'Informatique",
-  "issue_date": "2025-08-06",
-  "is_valid": true,
-  "document": {
-    "id": 15,
-    "original_filename": "master_diploma_certificate.jpg",
-    "type": "new_diploma",
-    "student_id": 3,
-    "diploma_id": 24,
-    "file_path": "jpeg/new_diploma/3/2025/08/8431a7705cae42678c7e12347eb1e6f6.jpg",
-    "download_url": "http://localhost:8000/uploads/jpeg/new_diploma/3/2025/08/8431a7705cae42678c7e12347eb1e6f6.jpg",
-    "uploaded_by_clerk_user_id": "user_30d5G5HS9Xo6TkFysXMtf9bWYhy",
-    "uploaded_at": "2025-08-06T13:46:46.534069Z"
-  },
-  "status_history": [
-    {
-      "status": "en attente",
-      "reason": null,
-      "notes": null,
-      "id": 1,
-      "diploma_id": 24,
-      "changed_by_clerk_user_id": "user_30d5G5HS9Xo6TkFysXMtf9bWYhy",
-      "date": "2025-08-06T13:46:46.577285Z"
-    },
-    {
-      "status": "en cours de vérification",
-      "reason": "Documents soumis pour vérification",
-      "notes": "Vérification des informations avec l'institution",
-      "id": 2,
-      "diploma_id": 24,
-      "changed_by_clerk_user_id": "user_admin_123",
-      "date": "2025-08-07T09:15:30.123456Z"
-    },
-    {
-      "status": "validé",
-      "reason": "Vérification complétée avec succès",
-      "notes": "Toutes les informations ont été confirmées par l'institution",
-      "id": 3,
-      "diploma_id": 24,
-      "changed_by_clerk_user_id": "user_admin_123",
-      "date": "2025-08-07T14:30:45.789012Z"
-    }
-  ],
-  "created_at": "2025-08-06T13:46:46.523506Z"
-}
-
-// Sample student data for context
-const studentInfo = {
-  "id": 3,
-  "first_name": "Sarah",
-  "last_name": "Johnson",
-  "email": "sarah.johnson@example.com"
-}
+import { useStudentService } from "@/services/studentService"
 
 function formatDate(dateString: string) {
   return new Date(dateString).toLocaleDateString('en-US', {
@@ -197,26 +140,36 @@ function getStatusIcon(status: string) {
 export default function DiplomaDetailsPage() {
   const { diplomaId } = useParams()
   const [diploma , setDiploma] = useState<z.infer<typeof diplomaSchemaOut> | null>(null)
+  const [studentInfo , setStudentInfo] = useState(null)
   const diplomaService = useDiplomaService()
+  const studentService = useStudentService()
   const student = studentInfo
   const currentStatus = diploma?.current_status
   const navigate = useNavigate()
 
-   useEffect(() => {
+   useEffect( () => {
+     const fetchStudentMinimal = async (student_id: number) => {
+       const student = await studentService.getOneMinimal(student_id).catch((error) => {
+         console.error("Failed to fetch student:", error)
+         return null
+       })
+       setStudentInfo(student)
+       return student
+     }
         const fetchDiploma = async () => {
           const diploma = await diplomaService.getOne(Number.parseInt(diplomaId || "1")).catch((error) => {
             console.error("Failed to fetch diploma:", error)
             return null
           })
           setDiploma(diploma)
+          fetchStudentMinimal(diploma.student_id)
           console.log("Fetched diploma:", diploma)
         }
 
         fetchDiploma()
-
       }, [])
 
-  if(!diploma) {
+  if(!diploma || !student) {
     return (
       <div className="container mx-auto p-6 max-w-6xl">
         <h1 className="text-2xl font-bold">Loading Diploma Details...</h1>

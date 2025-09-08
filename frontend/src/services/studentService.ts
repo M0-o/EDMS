@@ -48,6 +48,15 @@ export function useStudentService() {
     return response.json()
   }
 
-  return {getAll , create , deleteById , getOne}
+  async function getOneMinimal(id : number) {
+    const token = await getToken()
+    const response = await fetch(`${API_BASE}/students/${id}/minimal`, {
+      method: 'GET',
+      headers: { Authorization: `Bearer ${token}` }
+    })
+    return response.json()
+  }
+
+  return {getAll , create , deleteById , getOne , getOneMinimal}
 }
 

@@ -87,7 +87,74 @@ function DragHandle({ id }: { id: number }) {
   )
 }
 
-const diplomaColumns: ColumnDef<z.infer<typeof diplomaSchemaOut>>[] = [
+
+
+function DraggableRow({ row }: { row: Row<z.infer<typeof diplomaSchemaOut>> }) {
+  const { transform, transition, setNodeRef, isDragging } = useSortable({
+    id: row.original.id,
+  })
+
+  return (
+    <TableRow
+      data-state={row.getIsSelected() && "selected"}
+      data-dragging={isDragging}
+      ref={setNodeRef}
+      className="relative z-0 data-[dragging=true]:z-10 data-[dragging=true]:opacity-80"
+      style={{
+        transform: CSS.Transform.toString(transform),
+        transition: transition,
+      }}
+    >
+      {row.getVisibleCells().map((cell) => (
+        <TableCell key={cell.id}>{flexRender(cell.column.columnDef.cell, cell.getContext())}</TableCell>
+      ))}
+    </TableRow>
+  )
+}
+
+export function DiplomasDataTable({
+  pdata,
+  handleDiplomaDelete,
+}: {
+  pdata: z.infer<typeof diplomaSchemaOut>[]
+  handleDiplomaDelete: (id: number) => void
+}) {
+  const [data, setData] = React.useState<z.infer<typeof diplomaSchemaOut>[]>([])
+  React.useEffect(() => {
+    setData(pdata)
+  }, [pdata])
+  const [searchParams, setSearchParams] = useSearchParams()
+  const [rowSelection, setRowSelection] = React.useState({})
+  const [columnVisibility, setColumnVisibility] = React.useState<VisibilityState>({
+    student_id: searchParams.get("student_id") !== "false",
+    title: searchParams.get("title") !== "false",
+    institution: searchParams.get("institution") !== "false",
+    issue_date: searchParams.get("issue_date") !== "false",
+    is_valid: searchParams.get("is_valid") !== "false",
+    created_at: searchParams.get("created_at") !== "false",
+  })
+  const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>([
+    {
+      id: "title",
+      value: searchParams.get("search") || "",
+    },
+  ])
+  const [sorting, setSorting] = React.useState<SortingState>([])
+  const [pagination, setPagination] = React.useState({
+    pageIndex: 0,
+    pageSize: 10,
+  })
+
+  const sortableId = React.useId()
+  const sensors = useSensors(
+    useSensor(PointerSensor),
+    useSensor(KeyboardSensor, {
+      coordinateGetter: sortableKeyboardCoordinates,
+    }),
+  )
+
+  const dataIds = React.useMemo<UniqueIdentifier[]>(() => data?.map(({ id }) => id) || [], [data])
+  const diplomaColumns: ColumnDef<z.infer<typeof diplomaSchemaOut>>[] = React.useMemo( ()=> [
   {
     id: "drag",
     header: () => null,
@@ -167,77 +234,15 @@ const diplomaColumns: ColumnDef<z.infer<typeof diplomaSchemaOut>>[] = [
           <DropdownMenuItem>Edit</DropdownMenuItem>
           <DropdownMenuItem>View Details</DropdownMenuItem>
           <DropdownMenuItem>Download</DropdownMenuItem>
-          <DropdownMenuItem className="text-destructive">Delete</DropdownMenuItem>
+          <DropdownMenuItem className="text-destructive" onClick={()=>{
+            handleDiplomaDelete(Number(row.id));
+            setData((data) => data.filter((d) => d.id !== Number(row.id)));
+          }}>Delete</DropdownMenuItem>
         </DropdownMenuContent>
       </DropdownMenu>
     ),
   },
-]
-
-function DraggableRow({ row }: { row: Row<z.infer<typeof diplomaSchemaOut>> }) {
-  const { transform, transition, setNodeRef, isDragging } = useSortable({
-    id: row.original.id,
-  })
-
-  return (
-    <TableRow
-      data-state={row.getIsSelected() && "selected"}
-      data-dragging={isDragging}
-      ref={setNodeRef}
-      className="relative z-0 data-[dragging=true]:z-10 data-[dragging=true]:opacity-80"
-      style={{
-        transform: CSS.Transform.toString(transform),
-        transition: transition,
-      }}
-    >
-      {row.getVisibleCells().map((cell) => (
-        <TableCell key={cell.id}>{flexRender(cell.column.columnDef.cell, cell.getContext())}</TableCell>
-      ))}
-    </TableRow>
-  )
-}
-
-export function DiplomasDataTable({
-  pdata,
-}: {
-  pdata: z.infer<typeof diplomaSchemaOut>[]
-}) {
-  const [data, setData] = React.useState<z.infer<typeof diplomaSchemaOut>[]>([])
-  React.useEffect(() => {
-    setData(pdata)
-  }, [pdata])
-  const [searchParams, setSearchParams] = useSearchParams()
-  const [rowSelection, setRowSelection] = React.useState({})
-  const [columnVisibility, setColumnVisibility] = React.useState<VisibilityState>({
-    student_id: searchParams.get("student_id") !== "false",
-    title: searchParams.get("title") !== "false",
-    institution: searchParams.get("institution") !== "false",
-    issue_date: searchParams.get("issue_date") !== "false",
-    is_valid: searchParams.get("is_valid") !== "false",
-    created_at: searchParams.get("created_at") !== "false",
-  })
-  const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>([
-    {
-      id: "title",
-      value: searchParams.get("search") || "",
-    },
-  ])
-  const [sorting, setSorting] = React.useState<SortingState>([])
-  const [pagination, setPagination] = React.useState({
-    pageIndex: 0,
-    pageSize: 10,
-  })
-
-  const sortableId = React.useId()
-  const sensors = useSensors(
-    useSensor(PointerSensor),
-    useSensor(KeyboardSensor, {
-      coordinateGetter: sortableKeyboardCoordinates,
-    }),
-  )
-
-  const dataIds = React.useMemo<UniqueIdentifier[]>(() => data?.map(({ id }) => id) || [], [data])
-
+] , [])
   const table =  useReactTable({
     data,
     columns: diplomaColumns,
@@ -344,11 +349,14 @@ export function DiplomasDataTable({
               <span><Link to="/diplomas/create">Add Diploma</Link></span>
             </Button>
             {
-              (Object.keys(rowSelection).length != 0 ) && <Button variant="outline" size="sm">
+              Object.keys(rowSelection).length > 1 ?<Button variant="outline" size="sm">
               <Plus className="h-4 w-4" />
               <span><Link to={`/diplomas/batchUpdateStatus/${encodeURIComponent(JSON.stringify(
                 Object.keys(rowSelection)))}`}>Change Status</Link></span>
-            </Button>
+            </Button> : Object.keys(rowSelection).length == 1 ?  <Button variant="outline" size="sm">
+              <Plus className="h-4 w-4" />
+              <span><Link to={`${Object.keys(rowSelection)[0]}/updateStatus`}>Change Status</Link></span>
+            </Button>: null
             }
             
           </div>

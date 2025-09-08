@@ -30,7 +30,7 @@ class Diploma(Base):
         uselist=False,  
         cascade="all, delete-orphan"
     )
-    status_history = relationship("DiplomaStatus", back_populates="diploma")
+    status_history = relationship("DiplomaStatus", back_populates="diploma",cascade="all, delete-orphan")
     
     def __repr__(self):
         return f"<Diploma(id={self.id}, title='{self.title}', student_id={self.student_id})>"

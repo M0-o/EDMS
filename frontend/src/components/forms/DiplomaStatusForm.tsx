@@ -28,7 +28,7 @@ import {
 
 import { diplomaStatusCreateSchema } from "@/schemas/diplomaStatusSchemas"
 import { useDiplomaService } from "@/services/diplomaService"
-
+import { useNavigate } from "react-router-dom"
 // Status options based on the enum
 const statusOptions = [
   { value: "en attente", label: "En Attente", icon: Clock },
@@ -57,7 +57,7 @@ export default function DiplomaStatusForm({
 
   const [URLsearchParams, setURLsearchParams] = useSearchParams()
   const diplomaService = useDiplomaService()
-  
+  const navigate = useNavigate()
   const form = useForm<z.infer<typeof diplomaStatusCreateSchema>>({
     resolver: zodResolver(diplomaStatusCreateSchema),
     defaultValues: {
@@ -103,7 +103,7 @@ export default function DiplomaStatusForm({
   const response = await diplomaService.updateStatus(data)
 
   
-
+  navigate(-1)
   }
 
   const selectedStatus = statusOptions.find((option) => option.value === form.getValues().status)

@@ -33,70 +33,70 @@ function getStatusBadge(status: string) {
   switch (status.toLowerCase()) {
     case 'en attente':
       return (
-        <Badge variant="secondary" className="bg-yellow-100 text-yellow-800 hover:bg-yellow-100">
+        <Badge variant="secondary" className="bg-yellow-100 text-yellow-800 hover:bg-yellow-100 dark:bg-yellow-950 dark:text-yellow-600">
           <Clock className="h-3 w-3 mr-1" />
           En Attente
         </Badge>
       )
     case 'envoyé à la présidence':
       return (
-        <Badge variant="secondary" className="bg-blue-100 text-blue-800 hover:bg-blue-100">
+        <Badge variant="secondary" className="bg-blue-100 text-blue-800 hover:bg-blue-100 dark:bg-blue-950 dark:text-blue-600">
           <AlertCircle className="h-3 w-3 mr-1" />
           Envoyé à la Présidence
         </Badge>
       )
     case 'arrivé à la présidence':
       return (
-        <Badge variant="secondary" className="bg-blue-200 text-blue-900 hover:bg-blue-200">
+        <Badge variant="secondary" className="bg-blue-200 text-blue-900 hover:bg-blue-200 dark:bg-blue-850 dark:text-blue-600">
           <CheckCircle className="h-3 w-3 mr-1" />
           Arrivé à la Présidence
         </Badge>
       )
     case 'envoyé à l\'établissement':
       return (
-        <Badge variant="secondary" className="bg-purple-100 text-purple-800 hover:bg-purple-100">
+        <Badge variant="secondary" className="bg-purple-100 text-purple-800 hover:bg-purple-100 dark:bg-purple-950 dark:text-purple-600">
           <AlertCircle className="h-3 w-3 mr-1" />
           Envoyé à l'Établissement
         </Badge>
       )
     case 'arrivé à l\'établissement':
       return (
-        <Badge variant="secondary" className="bg-purple-200 text-purple-900 hover:bg-purple-200">
+        <Badge variant="secondary" className="bg-purple-200 text-purple-900 hover:bg-purple-200 dark:bg-purple-850 dark:text-purple-600">
           <CheckCircle className="h-3 w-3 mr-1" />
           Arrivé à l'Établissement
         </Badge>
       )
     case 'correction requise':
       return (
-        <Badge variant="destructive" className="bg-orange-100 text-orange-800 hover:bg-orange-100">
+        <Badge variant="destructive" className="bg-orange-100 text-orange-800 hover:bg-orange-100 dark:bg-orange-950 dark:text-orange-600">
           <XCircle className="h-3 w-3 mr-1" />
           Correction Requise
         </Badge>
       )
     case 'renvoyé après correction':
       return (
-        <Badge variant="secondary" className="bg-indigo-100 text-indigo-800 hover:bg-indigo-100">
+        <Badge variant="secondary" className="bg-indigo-100 text-indigo-800 hover:bg-indigo-100 dark:bg-indigo-950 dark:text-indigo-600">
           <AlertCircle className="h-3 w-3 mr-1" />
           Renvoyé après Correction
         </Badge>
       )
     case 'signé par le président':
       return (
-        <Badge variant="default" className="bg-emerald-100 text-emerald-800 hover:bg-emerald-100">
+        <Badge variant="default" className="bg-emerald-100 text-emerald-800 hover:bg-emerald-100 dark:bg-emerald-950 dark:text-emerald-600">
           <CheckCircle className="h-3 w-3 mr-1" />
           Signé par le Président
         </Badge>
       )
     case 'prêt':
       return (
-        <Badge variant="default" className="bg-green-100 text-green-800 hover:bg-green-100">
+        <Badge variant="default" className="bg-green-100 text-green-800 hover:bg-green-100 dark:bg-green-950 dark:text-green-600">
           <CheckCircle className="h-3 w-3 mr-1" />
           Prêt
         </Badge>
       )
     case 'délivré':
       return (
-        <Badge variant="default" className="bg-green-200 text-green-900 hover:bg-green-200">
+        <Badge variant="default" className="bg-green-200 text-green-900 hover:bg-green-200 dark:bg-green-900 dark:text-green-500">
           <CheckCircle className="h-3 w-3 mr-1" />
           Délivré
         </Badge>
@@ -113,27 +113,27 @@ function getStatusBadge(status: string) {
 function getStatusIcon(status: string) {
   switch (status.toLowerCase()) {
     case 'en attente':
-      return <Clock className="h-4 w-4 text-yellow-600" />
+      return <Clock className="h-4 w-4 text-yellow-600 dark:text-yellow-400 " />
     case 'envoyé à la présidence':
-      return <AlertCircle className="h-4 w-4 text-blue-600" />
+      return <AlertCircle className="h-4 w-4 text-blue-600 dark:text-blue-400" />
     case 'arrivé à la présidence':
-      return <CheckCircle className="h-4 w-4 text-blue-700" />
+      return <CheckCircle className="h-4 w-4 text-blue-700 dark:text-blue-500" />
     case 'envoyé à l\'établissement':
-      return <AlertCircle className="h-4 w-4 text-purple-600" />
+      return <AlertCircle className="h-4 w-4 text-purple-600 dark:text-purple-400" />
     case 'arrivé à l\'établissement':
-      return <CheckCircle className="h-4 w-4 text-purple-700" />
+      return <CheckCircle className="h-4 w-4 text-purple-700 dark:text-purple-500" />
     case 'correction requise':
-      return <XCircle className="h-4 w-4 text-orange-600" />
+      return <XCircle className="h-4 w-4 text-orange-600 dark:text-orange-400" />
     case 'renvoyé après correction':
-      return <AlertCircle className="h-4 w-4 text-indigo-600" />
+      return <AlertCircle className="h-4 w-4 text-indigo-600 dark:text-indigo-400" />
     case 'signé par le président':
-      return <CheckCircle className="h-4 w-4 text-emerald-600" />
+      return <CheckCircle className="h-4 w-4 text-emerald-600 dark:text-emerald-400" />
     case 'prêt':
-      return <CheckCircle className="h-4 w-4 text-green-600" />
+      return <CheckCircle className="h-4 w-4 text-green-600 dark:text-green-400" />
     case 'délivré':
-      return <CheckCircle className="h-4 w-4 text-green-700" />
+      return <CheckCircle className="h-4 w-4 text-green-700 dark:text-green-500" />
     default:
-      return <Clock className="h-4 w-4 text-gray-600" />
+      return <Clock className="h-4 w-4 text-gray-600 dark:text-gray-400" />
   }
 }
 
@@ -180,9 +180,9 @@ export default function DiplomaDetailsPage() {
     <div className="container mx-auto p-6 max-w-6xl">
       {/* Header with Back Button */}
       <div className="flex items-center gap-4 mb-6">
-        <Button variant="outline" size="sm">
+        <Button variant="outline" size="sm" onClick={() => navigate(-1)}>
           <ArrowLeft className="h-4 w-4 mr-2" />
-          Back to Student
+          Back
         </Button>
         <div className="flex-1">
           <h1 className="text-3xl font-bold">Diploma Details</h1>
@@ -198,8 +198,8 @@ export default function DiplomaDetailsPage() {
             <CardHeader>
               <div className="flex items-start justify-between">
                 <div className="flex items-start gap-4">
-                  <div className="p-3 bg-blue-100 rounded-lg">
-                    <GraduationCap className="h-8 w-8 text-blue-600" />
+                  <div className="p-3 bg-blue-100 dark:bg-gray-800 rounded-lg">
+                    <GraduationCap className="h-8 w-8 text-blue-600 dark:text-blue-900 " />
                   </div>
                   <div>
                     <CardTitle className="text-2xl mb-2">{diploma.title}</CardTitle>
@@ -303,11 +303,11 @@ export default function DiplomaDetailsPage() {
                 {diploma.status_history?.map((history, index) => (
                   <div key={history.id} className="flex gap-4">
                     <div className="flex flex-col items-center">
-                      <div className="p-2 bg-white border-2 border-gray-200 rounded-full">
+                      <div className="p-2  border-2 border-gray-200 dark:border-zinc-800 rounded-full">
                         {getStatusIcon(history.status)}
                       </div>
                       {index < diploma.status_history.length - 1 && (
-                        <div className="w-px h-16 bg-gray-200 mt-2" />
+                        <div className="w-px h-16 bg-gray-200 dark:bg-zinc-800 mt-2" />
                       )}
                     </div>
                     <div className="flex-1 pb-8">

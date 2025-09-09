@@ -4,7 +4,7 @@ import { useAuth} from "@clerk/clerk-react"
 import { diplomaStatusCreateSchema } from "@/schemas/diplomaStatusSchemas"
 import { batchDiplomaStatusCreateSchema } from "@/schemas/diplomaStatusSchemas"
 
-const API_BASE = 'http://localhost:8000'
+const API_BASE = 'http://192.168.1.58:8000'
 
 
 

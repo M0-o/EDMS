@@ -28,6 +28,7 @@ import {
 
 import { batchDiplomaStatusCreateSchema } from "@/schemas/diplomaStatusSchemas"
 import { useDiplomaService } from "@/services/diplomaService"
+import { useNavigate } from "react-router-dom"
 
 // Status options based on the enum
 const statusOptions = [
@@ -55,7 +56,7 @@ export default function BatchDiplomaStatusForm({
 
   const [URLsearchParams, setURLsearchParams] = useSearchParams()
   const diplomaService = useDiplomaService()
-  
+  const navigate = useNavigate()
   const form = useForm<z.infer<typeof batchDiplomaStatusCreateSchema>>({
     resolver: zodResolver(batchDiplomaStatusCreateSchema),
     defaultValues: {
@@ -100,6 +101,7 @@ export default function BatchDiplomaStatusForm({
   
   const response = await diplomaService.batchUpdateStatus(data)
 
+  navigate(-1)
   }
 
   const selectedStatus = statusOptions.find((option) => option.value === form.getValues().status)
@@ -202,10 +204,10 @@ export default function BatchDiplomaStatusForm({
             />
 
             {/* Hidden Diploma ID Field (for reference) */}
-            <div className="bg-gray-50 p-3 rounded-lg">
+            <div className=" p-3 rounded-lg">
               <div className="flex items-center justify-between text-sm">
                 <span className="text-muted-foreground">Diploma IDs:</span>
-                <span className="font-medium">{JSON.stringify(diplomaIds)}</span>
+                <span className="font-medium text-muted-foreground">{JSON.stringify(diplomaIds)}</span>
               </div>
             </div>
 
@@ -213,11 +215,8 @@ export default function BatchDiplomaStatusForm({
             <div className="flex gap-3 pt-4">
               <Button type="submit"className="flex-1">
                
-                  <>
                     <CheckCircle className="h-4 w-4 mr-2" />
                     Update Status
-                  </>
-              
               </Button>
             
             </div>

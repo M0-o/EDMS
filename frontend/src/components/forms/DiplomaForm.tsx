@@ -150,6 +150,7 @@ useEffect(() => {
                     <FormControl>
                       <Input
                         type="number"
+                        min={0}
                         placeholder="Enter student ID"
                         {...field}
                         onChange={(e) => field.onChange(Number.parseInt(e.target.value) || 0)}

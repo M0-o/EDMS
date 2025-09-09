@@ -10,7 +10,7 @@ load_dotenv()
 app = FastAPI()
 
 origins = [
-    "http://localhost:5173",    # your frontend origin
+    "*"    # your frontend origin
     # add more origins here, or use ["*"] to allow all
 ]
 app.add_middleware(

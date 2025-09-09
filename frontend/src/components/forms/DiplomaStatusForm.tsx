@@ -206,10 +206,10 @@ export default function DiplomaStatusForm({
             />
 
             {/* Hidden Diploma ID Field (for reference) */}
-            <div className="bg-gray-50 p-3 rounded-lg">
+            <div className=" p-3 rounded-lg">
               <div className="flex items-center justify-between text-sm">
                 <span className="text-muted-foreground">Diploma ID:</span>
-                <span className="font-medium">{diplomaId}</span>
+                <span className="font-medium text-muted-foreground">{diplomaId}</span>
               </div>
             </div>
 
@@ -217,10 +217,8 @@ export default function DiplomaStatusForm({
             <div className="flex gap-3 pt-4">
               <Button type="submit"className="flex-1">
                
-                  <>
                     <CheckCircle className="h-4 w-4 mr-2" />
                     Update Status
-                  </>
               
               </Button>
             

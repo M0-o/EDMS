@@ -47,3 +47,4 @@ def delete_student(student_id: int, db: Session = Depends(get_db)):
     db.delete(student)
     db.commit()
     return student
+

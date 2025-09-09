@@ -48,3 +48,4 @@ backend/alembic/versions/*.pyc
 *.sqlite3
 *.db
 uploads
+internshipReport.md

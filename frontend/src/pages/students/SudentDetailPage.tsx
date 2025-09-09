@@ -9,7 +9,7 @@ import {useStudentService} from "@/services/studentService"
 import {useState , useEffect} from "react"
 import {studentSchemaOut} from "@/schemas/studentSchemas"
 import {z} from "zod"
-
+import { useNavigate } from "react-router-dom"
 
 function formatDate(dateString: string) {
   return new Date(dateString).toLocaleDateString('en-US', {
@@ -22,42 +22,48 @@ function formatDate(dateString: string) {
 function getInitials(firstName: string, lastName: string) {
   return `${firstName.charAt(0)}${lastName.charAt(0)}`.toUpperCase()
 }
-
 function getDocumentTypeIcon(documentType: string) {
   switch (documentType) {
-    case 'high_school_diploma':
-      return <GraduationCap className="h-5 w-5 text-purple-600" />
-    case 'national_id':
-      return <User className="h-5 w-5 text-blue-600" />
-    case 'previous_diploma':
-      return <GraduationCap className="h-5 w-5 text-green-600" />
-    case 'transcript':
-      return <FileText className="h-5 w-5 text-orange-600" />
+    case 'new_diploma':
+      return <GraduationCap className="h-5 w-5 text-emerald-600 dark:text-emerald-400" />
+    case 'carte_identite':
+      return <User className="h-5 w-5 text-blue-600 dark:text-blue-400" />
+    case 'baccalaureat':
+      return <GraduationCap className="h-5 w-5 text-purple-600 dark:text-purple-400" />
+    case 'diplome_bac2':
+      return <GraduationCap className="h-5 w-5 text-indigo-600 dark:text-indigo-400" />
+    case 'diplome_bac3':
+      return <GraduationCap className="h-5 w-5 text-violet-600 dark:text-violet-400" />
+    case 'releve_notes':
+      return <FileText className="h-5 w-5 text-orange-600 dark:text-orange-400" />
     default:
-      return <FileText className="h-5 w-5 text-gray-600" />
+      return <FileText className="h-5 w-5 text-gray-600 dark:text-gray-400" />
   }
 }
 
 function getDocumentTypeBadgeColor(documentType: string) {
   switch (documentType) {
-    case 'high_school_diploma':
-      return 'bg-purple-100 text-purple-800 hover:bg-purple-100'
-    case 'national_id':
-      return 'bg-blue-100 text-blue-800 hover:bg-blue-100'
-    case 'previous_diploma':
-      return 'bg-green-100 text-green-800 hover:bg-green-100'
-    case 'transcript':
-      return 'bg-orange-100 text-orange-800 hover:bg-orange-100'
+    case 'new_diploma':
+      return 'bg-emerald-100 dark:bg-emerald-800 text-emerald-800 dark:text-emerald-100 hover:bg-emerald-100 dark:hover:bg-emerald-800'
+    case 'carte_identite':
+      return 'bg-blue-100 dark:bg-blue-800 text-blue-800 dark:text-blue-100 hover:bg-blue-100 dark:hover:bg-blue-800'
+    case 'baccalaureat':
+      return 'bg-purple-100 dark:bg-purple-800 text-purple-800 dark:text-purple-100 hover:bg-purple-100 dark:hover:bg-purple-800'
+    case 'diplome_bac2':
+      return 'bg-indigo-100 dark:bg-indigo-800 text-indigo-800 dark:text-indigo-100 hover:bg-indigo-100 dark:hover:bg-indigo-800'
+    case 'diplome_bac3':
+      return 'bg-violet-100 dark:bg-violet-800 text-violet-800 dark:text-violet-100 hover:bg-violet-100 dark:hover:bg-violet-800'
+    case 'releve_notes':
+      return 'bg-orange-100 dark:bg-orange-800 text-orange-800 dark:text-orange-100 hover:bg-orange-100 dark:hover:bg-orange-800'
     default:
-      return 'bg-gray-100 text-gray-800 hover:bg-gray-100'
+      return 'bg-gray-100 dark:bg-gray-800 text-gray-800 dark:text-gray-100 hover:bg-gray-100 dark:hover:bg-gray-800'
   }
 }
-
 export default function StudentDetailsPage() {
   const { studentId }= useParams();
   const studentService = useStudentService()
   const [student, setStudent] = useState<z.infer<typeof studentSchemaOut> | null>(null)
-
+  const navigate = useNavigate()
   useEffect(() => {
       const fetchStudent = async () => {
         const student = await studentService.getOne(Number.parseInt(studentId || "1")).catch((error) => {
@@ -77,6 +83,9 @@ export default function StudentDetailsPage() {
   }
   return (
     <div className="container mx-auto p-6 max-w-6xl">
+      <Button variant="outline" onClick={() => navigate(-1)}>
+        Back
+      </Button>
       {/* Student Header */}
       <div className="mb-8">
         <Card>
@@ -155,7 +164,7 @@ export default function StudentDetailsPage() {
                   </div>
                   <div className="flex items-center gap-2">
                     {diploma.is_valid ? (
-                      <Badge variant="default" className="bg-green-100 text-green-800 hover:bg-green-100">
+                      <Badge variant="default" className="bg-green-100 dark:bg-green-950 dark:text-green-600 text-green-800 hover:bg-green-100">
                         <CheckCircle className="h-3 w-3 mr-1" />
                         Valid
                       </Badge>
@@ -175,7 +184,7 @@ export default function StudentDetailsPage() {
                   <CardContent className="pt-4">
                     <div className="flex items-center justify-between">
                       <div className="flex items-center gap-3">
-                        <div className="p-2 bg-blue-100 rounded-lg">
+                        <div className="p-2 bg-blue-100 dark:bg-zinc-800 rounded-lg">
                           <FileText className="h-5 w-5 text-blue-600" />
                         </div>
                         <div>
@@ -187,6 +196,7 @@ export default function StudentDetailsPage() {
                       </div>
                       <Button 
                         variant="outline" 
+                        className="dark:border-zinc-800"
                         size="sm"
                         onClick={() => window.open(diploma.document?.download_url, '_blank')}
                       >
@@ -218,11 +228,11 @@ export default function StudentDetailsPage() {
 
         <div className="grid gap-4">
           {student.verification_documents.map((doc) => (
-            <Card key={doc.id} className="relative">
+            <Card key={doc.id} className="relative dark:border-zinc-800">
               <CardContent className="p-6">
                 <div className="flex items-start justify-between">
                   <div className="flex items-start gap-4 flex-1">
-                    <div className="p-3 bg-gray-50 rounded-lg">
+                    <div className="p-3 bg-gray-50 dark:bg-zinc-800 rounded-lg">
                       {getDocumentTypeIcon(doc.type)}
                     </div>
                     <div className="flex-1">
@@ -256,11 +266,12 @@ export default function StudentDetailsPage() {
                   <div className="flex items-center gap-2">
                     {doc && (
                       <Button 
-                        variant="outline" 
+                        variant="outline"
+                        className="dark:border-zinc-800" 
                         size="sm"
                         onClick={() => window.open(doc.download_url, '_blank')}
                       >
-                        <Download className="h-4 w-4 mr-2" />
+                        <Download className="h-4 w-4 mr-2 " />
                         Download
                       </Button>
                     )}

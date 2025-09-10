@@ -29,6 +29,7 @@ import {
 import { diplomaStatusCreateSchema } from "@/schemas/diplomaStatusSchemas"
 import { useDiplomaService } from "@/services/diplomaService"
 import { useNavigate } from "react-router-dom"
+import { toast } from "sonner"
 // Status options based on the enum
 const statusOptions = [
   { value: "en attente", label: "En Attente", icon: Clock },
@@ -98,14 +99,26 @@ export default function DiplomaStatusForm({
 
 
  async function onFormSubmit(data: z.infer<typeof diplomaStatusCreateSchema>) {
-    
-  
-  const response = await diplomaService.updateStatus(data)
 
-  
-  navigate(-1)
+  let navigateBackFlag = 0
+  toast.promise(diplomaService.updateStatus(data).then(res => {
+    if(res.status && res.status !== 200){
+      throw new Error(res.detail)
+    }else {
+      navigateBackFlag = 1
+      return res
+    }
+  }), {
+    loading: 'Updating status...',
+    success:'Status updated successfully!',
+    error: (err) => `${err}`,
+  });
+
+  if(navigateBackFlag){
+    navigate(-1)
   }
-
+  
+ }
   const selectedStatus = statusOptions.find((option) => option.value === form.getValues().status)
   const StatusIcon = selectedStatus?.icon || AlertCircle
 

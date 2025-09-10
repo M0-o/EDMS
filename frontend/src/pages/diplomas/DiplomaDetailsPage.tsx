@@ -40,7 +40,7 @@ function getStatusBadge(status: string) {
       )
     case 'envoyé à la présidence':
       return (
-        <Badge variant="secondary" className="bg-blue-100 text-blue-800 hover:bg-blue-100 dark:bg-blue-950 dark:text-blue-600">
+        <Badge variant="secondary" className="bg-blue-100 text-blue-900 hover:bg-blue-100 dark:bg-blue-800 dark:text-blue-200">
           <AlertCircle className="h-3 w-3 mr-1" />
           Envoyé à la Présidence
         </Badge>
@@ -54,7 +54,7 @@ function getStatusBadge(status: string) {
       )
     case 'envoyé à l\'établissement':
       return (
-        <Badge variant="secondary" className="bg-purple-100 text-purple-800 hover:bg-purple-100 dark:bg-purple-950 dark:text-purple-600">
+        <Badge variant="secondary" className="bg-purple-100 text-purple-800 hover:bg-purple-100 dark:bg-purple-800 dark:text-purple-200">
           <AlertCircle className="h-3 w-3 mr-1" />
           Envoyé à l'Établissement
         </Badge>
@@ -68,35 +68,35 @@ function getStatusBadge(status: string) {
       )
     case 'correction requise':
       return (
-        <Badge variant="destructive" className="bg-orange-100 text-orange-800 hover:bg-orange-100 dark:bg-orange-950 dark:text-orange-600">
+        <Badge variant="destructive" className="bg-rose-100 text-rose-800 hover:bg-rose-100 dark:bg-rose-950 dark:text-rose-100">
           <XCircle className="h-3 w-3 mr-1" />
           Correction Requise
         </Badge>
       )
     case 'renvoyé après correction':
       return (
-        <Badge variant="secondary" className="bg-indigo-100 text-indigo-800 hover:bg-indigo-100 dark:bg-indigo-950 dark:text-indigo-600">
+        <Badge variant="secondary" className="bg-rose-100 text-rose-800 hover:bg-rose-100 dark:bg-rose-200 dark:text-rose-800">
           <AlertCircle className="h-3 w-3 mr-1" />
           Renvoyé après Correction
         </Badge>
       )
     case 'signé par le président':
       return (
-        <Badge variant="default" className="bg-emerald-100 text-emerald-800 hover:bg-emerald-100 dark:bg-emerald-950 dark:text-emerald-600">
+        <Badge variant="default" className="bg-indigo-100 text-indigo-800 hover:bg-indigo-100 dark:bg-indigo-900 dark:text-indigo-200">
           <CheckCircle className="h-3 w-3 mr-1" />
           Signé par le Président
         </Badge>
       )
     case 'prêt':
       return (
-        <Badge variant="default" className="bg-green-100 text-green-800 hover:bg-green-100 dark:bg-green-950 dark:text-green-600">
+        <Badge variant="default" className="bg-green-100 text-green-800 hover:bg-green-100 dark:bg-green-900 dark:text-green-100">
           <CheckCircle className="h-3 w-3 mr-1" />
           Prêt
         </Badge>
       )
     case 'délivré':
       return (
-        <Badge variant="default" className="bg-green-200 text-green-900 hover:bg-green-200 dark:bg-green-900 dark:text-green-500">
+        <Badge variant="default" className="bg-green-200 text-green-900 hover:bg-green-200 dark:bg-green-200 dark:text-green-900">
           <CheckCircle className="h-3 w-3 mr-1" />
           Délivré
         </Badge>
@@ -115,23 +115,23 @@ function getStatusIcon(status: string) {
     case 'en attente':
       return <Clock className="h-4 w-4 text-yellow-600 dark:text-yellow-400 " />
     case 'envoyé à la présidence':
-      return <AlertCircle className="h-4 w-4 text-blue-600 dark:text-blue-400" />
+      return <AlertCircle className="h-4 w-4 text-blue-600 dark:text-blue-800" />
     case 'arrivé à la présidence':
-      return <CheckCircle className="h-4 w-4 text-blue-700 dark:text-blue-500" />
+      return <CheckCircle className="h-4 w-4 text-blue-700 dark:text-blue-400" />
     case 'envoyé à l\'établissement':
-      return <AlertCircle className="h-4 w-4 text-purple-600 dark:text-purple-400" />
+      return <AlertCircle className="h-4 w-4 text-purple-600 dark:text-purple-800" />
     case 'arrivé à l\'établissement':
-      return <CheckCircle className="h-4 w-4 text-purple-700 dark:text-purple-500" />
+      return <CheckCircle className="h-4 w-4 text-purple-700 dark:text-purple-400" />
     case 'correction requise':
-      return <XCircle className="h-4 w-4 text-orange-600 dark:text-orange-400" />
+      return <XCircle className="h-4 w-4 text-rose-600 dark:text-rose-800" />
     case 'renvoyé après correction':
-      return <AlertCircle className="h-4 w-4 text-indigo-600 dark:text-indigo-400" />
+      return <AlertCircle className="h-4 w-4 text-rose-600 dark:text-rose-400" />
     case 'signé par le président':
-      return <CheckCircle className="h-4 w-4 text-emerald-600 dark:text-emerald-400" />
+      return <CheckCircle className="h-4 w-4 text-indigo-600 dark:text-indigo-500" />
     case 'prêt':
-      return <CheckCircle className="h-4 w-4 text-green-600 dark:text-green-400" />
+      return <CheckCircle className="h-4 w-4 text-green-600 dark:text-green-800" />
     case 'délivré':
-      return <CheckCircle className="h-4 w-4 text-green-700 dark:text-green-500" />
+      return <CheckCircle className="h-4 w-4 text-green-700 dark:text-green-400" />
     default:
       return <Clock className="h-4 w-4 text-gray-600 dark:text-gray-400" />
   }
@@ -180,10 +180,6 @@ export default function DiplomaDetailsPage() {
     <div className="container mx-auto p-6 max-w-6xl">
       {/* Header with Back Button */}
       <div className="flex items-center gap-4 mb-6">
-        <Button variant="outline" size="sm" onClick={() => navigate(-1)}>
-          <ArrowLeft className="h-4 w-4 mr-2" />
-          Back
-        </Button>
         <div className="flex-1">
           <h1 className="text-3xl font-bold">Diploma Details</h1>
           <p className="text-muted-foreground">ID: {diploma.id}</p>
@@ -224,7 +220,7 @@ export default function DiplomaDetailsPage() {
                 <div className="flex flex-col items-end gap-2">
                   {getStatusBadge(currentStatus || "en attente")}
                   {diploma.is_valid ? (
-                    <Badge variant="default" className="bg-green-100 text-green-800 hover:bg-green-100">
+                    <Badge variant="default" className="bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-100 hover:bg-green-100">
                       <CheckCircle className="h-3 w-3 mr-1" />
                       Valid
                     </Badge>
@@ -249,9 +245,9 @@ export default function DiplomaDetailsPage() {
                 </CardTitle>
               </CardHeader>
               <CardContent>
-                <div className="flex items-center justify-between p-4 bg-gray-50 rounded-lg">
+                <div className="flex items-center justify-between p-4 bg-gray-50 dark:bg-zinc-800 rounded-lg">
                   <div className="flex items-center gap-4">
-                    <div className="p-3 bg-white rounded-lg shadow-sm">
+                    <div className="p-3 bg-white dark:bg-zinc-900 rounded-lg shadow-sm">
                       <FileText className="h-6 w-6 text-blue-600" />
                     </div>
                     <div>

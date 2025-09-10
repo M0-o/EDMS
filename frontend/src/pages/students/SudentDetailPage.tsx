@@ -83,9 +83,6 @@ export default function StudentDetailsPage() {
   }
   return (
     <div className="container mx-auto p-6 max-w-6xl">
-      <Button variant="outline" onClick={() => navigate(-1)}>
-        Back
-      </Button>
       {/* Student Header */}
       <div className="mb-8">
         <Card>

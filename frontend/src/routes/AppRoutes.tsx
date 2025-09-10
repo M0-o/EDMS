@@ -14,6 +14,7 @@ import UpdateDiplomaStatusPage from '@/pages/diplomas/UpdateDiplomaStatus'
 import DiplomasPerStatusPage from '@/pages/status/DiplomasPerStatus'
 import BatchUpdateDiplomaStatusPage from '@/pages/diplomas/BatchUpdateDiplomaStatusPage'
 import UploadDocumentPage from '@/pages/documents/UploadDocumentPage'
+import WithNav from '@/components/WithNav'
 
 function PrivateRoute({ redirectTo = '/login' }: { redirectTo?: string }) {
   const { isSignedIn , isLoaded} = useUser()
@@ -37,22 +38,24 @@ export function AppRoutes() {
         
         <Route path="students" element={<Outlet />}>
           <Route index element={<StudentsPage />} />
-          <Route path=":studentId" element={<StudentDetailsPage />} />
-          <Route path="create" element={<CreateStudentPage />} />
+
+          <Route path=":studentId" element={<WithNav><StudentDetailsPage /></WithNav>} />
+          <Route path="create" element={<WithNav><CreateStudentPage /></WithNav>} />
+
         </Route>
 
         <Route path="diplomas" element={<Outlet />}>
           <Route index element={<DiplomasPage />} />
-          <Route path="create" element={<CreateDiplomaPage />} />
+          <Route path="create" element={<WithNav><CreateDiplomaPage /></WithNav>} />
           <Route path="status/:diplomaStatus" element={<DiplomasPerStatusPage />} />
-          <Route path=":diplomaId" element={<DiplomaDetailsPage />} />
-          <Route path=":diplomaId/updateStatus" element={<UpdateDiplomaStatusPage  />} />
-          <Route path="batchUpdateStatus/:diplomaIds" element={<BatchUpdateDiplomaStatusPage />} />
+          <Route path=":diplomaId" element={<WithNav><DiplomaDetailsPage /></WithNav>} />
+          <Route path=":diplomaId/updateStatus" element={<WithNav><UpdateDiplomaStatusPage /></WithNav>} />
+          <Route path="batchUpdateStatus/:diplomaIds" element={<WithNav><BatchUpdateDiplomaStatusPage /></WithNav>} />
         </Route>
 
       </Route>
       {/* Redirect root to home */}
-      <Route path="verification-documents/:studentId" element={<UploadDocumentPage />} />
+      <Route path="verification-documents/:studentId" element={<WithNav><UploadDocumentPage /></WithNav>} />
       {/* Redirect */}
       <Route path="dashboard" element={<Navigate to="/" replace />} />
       

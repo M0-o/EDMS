@@ -18,7 +18,9 @@ export function useStudentService() {
         Authorization: `Bearer ${token}`,
       },
     })
-    return response.json()
+    const strResponse = await response.json()
+    strResponse.status = response.status
+    return strResponse
   }
 
   async function create(student : z.infer< typeof studentSchemaCreate>) {
@@ -32,12 +34,17 @@ export function useStudentService() {
       },
       body: JSON.stringify(student),
     })
-    return response.json()
+    const strResponse = await response.json()
+    strResponse.status = response.status
+    return strResponse
   }
 
   async function deleteById(id : number) {
     const token = await getToken()
-    await fetch(`${API_BASE}/students/${id}`, { method: 'DELETE', headers: { Authorization: `Bearer ${token}` } })
+    const response = await fetch(`${API_BASE}/students/${id}`, { method: 'DELETE', headers: { Authorization: `Bearer ${token}` } })
+    const strResponse = await response.json()
+    strResponse.status = response.status
+    return strResponse
   }
 
   async function getOne(id : number): Promise<z.infer<typeof studentSchemaOut>> {
@@ -46,7 +53,9 @@ export function useStudentService() {
       method: 'GET',
       headers: { Authorization: `Bearer ${token}` }
     })
-    return response.json()
+    const strResponse = await response.json()
+    strResponse.status = response.status
+    return strResponse
   }
 
   async function getOneMinimal(id : number) {
@@ -55,7 +64,9 @@ export function useStudentService() {
       method: 'GET',
       headers: { Authorization: `Bearer ${token}` }
     })
-    return response.json()
+    const strResponse = await response.json()
+    strResponse.status = response.status
+    return strResponse
   }
 
   return {getAll , create , deleteById , getOne , getOneMinimal}

@@ -1,98 +1,110 @@
-"use client"
+"use client";
 
-import { zodResolver } from "@hookform/resolvers/zod"
-import { useForm } from "react-hook-form"
-import { z } from "zod"
-import { Button } from "@/components/ui/button"
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
-import { Form, FormControl, FormDescription, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form"
-import { Input } from "@/components/ui/input"
-import { toast } from "sonner"
-import { User, Mail, Hash, GraduationCap } from "lucide-react"
+import { zodResolver } from "@hookform/resolvers/zod";
+import { useForm } from "react-hook-form";
+import { z } from "zod";
+import { Button } from "@/components/ui/button";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
+import {
+  Form,
+  FormControl,
+  FormDescription,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
+} from "@/components/ui/form";
+import { Input } from "@/components/ui/input";
+import { toast } from "sonner";
+import { User, Mail, Hash, GraduationCap } from "lucide-react";
 
-import { useStudentService } from "@/services/studentService"
-import { studentSchemaCreate } from "@/schemas/studentSchemas"
-import { useSearchParams } from "react-router-dom"
+import { useStudentService } from "@/services/studentService";
+import { studentSchemaCreate } from "@/schemas/studentSchemas";
+import { useSearchParams } from "react-router-dom";
 
-import debounce from 'lodash/debounce'
-import { useEffect, useMemo } from 'react'
+import debounce from "lodash/debounce";
+import { useEffect, useMemo } from "react";
 
 export default function StudentForm() {
-
-  const [URLsearchParams , setURLsearchParams] = useSearchParams();
-  const studentService = useStudentService()
-    const initialValues = {
-        first_name: URLsearchParams.get("first_name") || "",
-        last_name: URLsearchParams.get("last_name") || "",
-        cne: URLsearchParams.get("cne") || "",
-        apogee: URLsearchParams.get("apogee") || "",
-        email: URLsearchParams.get("email") || "",
-    }
+  const [URLsearchParams, setURLsearchParams] = useSearchParams();
+  const studentService = useStudentService();
+  const initialValues = {
+    first_name: URLsearchParams.get("first_name") || "",
+    last_name: URLsearchParams.get("last_name") || "",
+    cne: URLsearchParams.get("cne") || "",
+    apogee: URLsearchParams.get("apogee") || "",
+    email: URLsearchParams.get("email") || "",
+  };
 
   const form = useForm<z.infer<typeof studentSchemaCreate>>({
     resolver: zodResolver(studentSchemaCreate),
-    defaultValues: initialValues
-  })
-  
+    defaultValues: initialValues,
+  });
+
   //persist the form data in the URL search params
-   const debouncedUpdateParams = useMemo(
+  const debouncedUpdateParams = useMemo(
     () =>
       debounce((value: z.infer<typeof studentSchemaCreate>) => {
-        const params = new URLSearchParams()
-        params.set("first_name", value.first_name || "")
-        params.set("last_name",  value.last_name  || "")
-        params.set("cne",        value.cne        || "")
-        params.set("apogee",     value.apogee     || "")
-        params.set("email",      value.email      || "")
-        setURLsearchParams(params, { replace: true })
+        const params = new URLSearchParams();
+        params.set("first_name", value.first_name || "");
+        params.set("last_name", value.last_name || "");
+        params.set("cne", value.cne || "");
+        params.set("apogee", value.apogee || "");
+        params.set("email", value.email || "");
+        setURLsearchParams(params, { replace: true });
       }, 300),
     [setURLsearchParams]
-  )
+  );
 
   useEffect(() => {
     const subscription = form.watch((value) => {
-      debouncedUpdateParams(value as z.infer<typeof studentSchemaCreate>)
-    })
+      debouncedUpdateParams(value as z.infer<typeof studentSchemaCreate>);
+    });
     return () => {
-      subscription.unsubscribe()
-      debouncedUpdateParams.cancel()
-    }
-  }, [form, debouncedUpdateParams])
+      subscription.unsubscribe();
+      debouncedUpdateParams.cancel();
+    };
+  }, [form, debouncedUpdateParams]);
 
   function onSubmit(values: z.infer<typeof studentSchemaCreate>) {
-
-
     // Convert empty email to undefined for optional handling
     const submitData = {
       ...values,
       email: values.email === "" ? undefined : values.email,
-    }
+    };
     // Call the create method from your service
-    studentService.create(submitData)
+    studentService
+      .create(submitData)
       .then((data) => {
-        console.log("Student created successfully:", data)
-        //show success toast and redirect to students page using react router 
+        console.log("Student created successfully:", data);
+        //show success toast and redirect to students page using react router
         toast.success("Student registered successfully!", {
-      description: (
-        <div className="mt-2 space-y-1">
-          <p>
-            <strong>
-              {submitData.first_name} {submitData.last_name}
-            </strong>
-          </p>
-          <p>CNE: {submitData.cne}</p>
-          <p>Apogee: {submitData.apogee}</p>
-          {submitData.email && <p>Email: {submitData.email}</p>}
-        </div>
-      ),
-    })
+          description: (
+            <div className="mt-2 space-y-1">
+              <p>
+                <strong>
+                  {submitData.first_name} {submitData.last_name}
+                </strong>
+              </p>
+              <p>CNE: {submitData.cne}</p>
+              <p>Apogee: {submitData.apogee}</p>
+              {submitData.email && <p>Email: {submitData.email}</p>}
+            </div>
+          ),
+        });
       })
       .catch((error) => {
-        console.error("Error creating student:", error)
-        toast.error("Failed to register student. Please try again.")
-      })
+        console.error("Error creating student:", error);
+        toast.error("Failed to register student. Please try again.");
+      });
 
-    form.reset()
+    form.reset();
   }
 
   return (
@@ -102,8 +114,12 @@ export default function StudentForm() {
           <div className="mx-auto w-12 h-12 rounded-full flex items-center justify-center">
             <GraduationCap className="w-6 h-6 " />
           </div>
-          <CardTitle className="text-2xl font-bold ">Student Registration</CardTitle>
-          <CardDescription >Register a new student in the academic system</CardDescription>
+          <CardTitle className="text-2xl font-bold ">
+            Student Registration
+          </CardTitle>
+          <CardDescription>
+            Register a new student in the academic system
+          </CardDescription>
         </CardHeader>
 
         <CardContent>
@@ -121,7 +137,11 @@ export default function StudentForm() {
                         First Name
                       </FormLabel>
                       <FormControl>
-                        <Input placeholder="Enter first name" className="h-11" {...field} />
+                        <Input
+                          placeholder="Enter first name"
+                          className="h-11"
+                          {...field}
+                        />
                       </FormControl>
                       <FormMessage />
                     </FormItem>
@@ -138,7 +158,11 @@ export default function StudentForm() {
                         Last Name
                       </FormLabel>
                       <FormControl>
-                        <Input placeholder="Enter last name" className="h-11" {...field} />
+                        <Input
+                          placeholder="Enter last name"
+                          className="h-11"
+                          {...field}
+                        />
                       </FormControl>
                       <FormMessage />
                     </FormItem>
@@ -158,9 +182,15 @@ export default function StudentForm() {
                         CNE (National Student Code)
                       </FormLabel>
                       <FormControl>
-                        <Input placeholder="A123456789" className="h-11 font-mono" {...field} />
+                        <Input
+                          placeholder="A123456789"
+                          className="h-11 font-mono"
+                          {...field}
+                        />
                       </FormControl>
-                      <FormDescription>Format: Letter followed by 9 digits (e.g., A123456789)</FormDescription>
+                      <FormDescription>
+                        Format: Letter followed by 9 digits (e.g., A123456789)
+                      </FormDescription>
                       <FormMessage />
                     </FormItem>
                   )}
@@ -176,9 +206,15 @@ export default function StudentForm() {
                         Apogee Code
                       </FormLabel>
                       <FormControl>
-                        <Input placeholder="12345678" className="h-11 font-mono" {...field} />
+                        <Input
+                          placeholder="12345678"
+                          className="h-11 font-mono"
+                          {...field}
+                        />
                       </FormControl>
-                      <FormDescription>8-digit student identification number</FormDescription>
+                      <FormDescription>
+                        8-digit student identification number
+                      </FormDescription>
                       <FormMessage />
                     </FormItem>
                   )}
@@ -197,9 +233,16 @@ export default function StudentForm() {
                       <span className="text-sm font-normal">(Optional)</span>
                     </FormLabel>
                     <FormControl>
-                      <Input type="email" placeholder="student@university.edu" className="h-11" {...field} />
+                      <Input
+                        type="email"
+                        placeholder="student@university.edu"
+                        className="h-11"
+                        {...field}
+                      />
                     </FormControl>
-                    <FormDescription>Optional email address for communication and notifications</FormDescription>
+                    <FormDescription>
+                      Optional email address for communication and notifications
+                    </FormDescription>
                     <FormMessage />
                   </FormItem>
                 )}
@@ -227,11 +270,13 @@ export default function StudentForm() {
               </div>
 
               {/* Form Status */}
-              <div className="text-center text-sm ">All fields marked with * are required</div>
+              <div className="text-center text-sm ">
+                All fields marked with * are required
+              </div>
             </form>
           </Form>
         </CardContent>
       </Card>
     </div>
-  )
+  );
 }

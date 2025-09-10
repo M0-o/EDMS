@@ -10,6 +10,7 @@ from app.models.diploma_status import DiplomaStatus , StatusType
 from app.auth import get_current_user
 from urllib.parse import unquote_plus
 from app.utils import save_file_to_disc
+from app.models.student import Student
 
 router = APIRouter()
 
@@ -23,13 +24,17 @@ async def create_diploma(
     user_id: str = Depends(get_current_user),
     db: Session             = Depends(get_db),
 ):
-    # build your diploma and persist
+    student = db.query(Student).filter(Student.id == student_id).first()
+    if not student:
+        raise HTTPException(status_code=404, detail="Student not found")
+    
     db_diploma = Diploma(
         student_id=student_id,
         title=title,
         institution=institution,
         issue_date=issue_date,
     )
+   
     
     db.add(db_diploma)
     db.commit()

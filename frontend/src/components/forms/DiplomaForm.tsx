@@ -1,127 +1,154 @@
-"use client"
+"use client";
 
-import type React from "react"
-import { zodResolver } from "@hookform/resolvers/zod"
-import { useForm } from "react-hook-form"
-import { z } from "zod"
-import { Button } from "@/components/ui/button"
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
-import { Form, FormControl, FormDescription, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form"
-import { Input } from "@/components/ui/input"
-import { toast } from "sonner"
-import { FileText, Upload, Calendar, Building, Hash, X } from "lucide-react"
-import { useState } from "react"
-import { diplomaSchemaCreate } from "@/schemas/diplomaSchemas"
-import { useSearchParams } from "react-router-dom"
-import { useMemo, useEffect } from "react"
-import debounce from "lodash/debounce"
-import { useDiplomaService } from "@/services/diplomaService"
+import type React from "react";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { useForm } from "react-hook-form";
+import { z } from "zod";
+import { Button } from "@/components/ui/button";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
+import {
+  Form,
+  FormControl,
+  FormDescription,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
+} from "@/components/ui/form";
+import { Input } from "@/components/ui/input";
+import { toast } from "sonner";
+import { FileText, Upload, Calendar, Building, Hash, X } from "lucide-react";
+import { useState } from "react";
+import { diplomaSchemaCreate } from "@/schemas/diplomaSchemas";
+import { useSearchParams } from "react-router-dom";
+import { useMemo, useEffect } from "react";
+import debounce from "lodash/debounce";
+import { useDiplomaService } from "@/services/diplomaService";
 
 export default function DiplomaForm() {
-
-  const [uploadedFile, setUploadedFile] = useState<File | null>(null)
-  const [URLsearchParams, setURLsearchParams] = useSearchParams()
-  const diplomaService = useDiplomaService()
+  const [uploadedFile, setUploadedFile] = useState<File | null>(null);
+  const [URLsearchParams, setURLsearchParams] = useSearchParams();
+  const diplomaService = useDiplomaService();
   const initialValues = {
-      student_id: Number(URLsearchParams.get("student_id")) || 0,
-      title: URLsearchParams.get("title") || "",
-      institution: URLsearchParams.get("institution") || "",
-      issue_date: URLsearchParams.get("issue_date") || "",
-  }
+    student_id: Number(URLsearchParams.get("student_id")) || 0,
+    title: URLsearchParams.get("title") || "",
+    institution: URLsearchParams.get("institution") || "",
+    issue_date: URLsearchParams.get("issue_date") || "",
+  };
   const form = useForm<z.infer<typeof diplomaSchemaCreate>>({
     resolver: zodResolver(diplomaSchemaCreate),
     defaultValues: initialValues,
-  })
+  });
 
-const debouncedUpdateParams = useMemo(
+  const debouncedUpdateParams = useMemo(
     () =>
-        debounce((value: z.infer<typeof diplomaSchemaCreate>) => {
-            const params = new URLSearchParams()
-            params.set(
-              "student_id",
-              value.student_id.toLocaleString("fullwide", { useGrouping: false }) || ""
-            )
-            params.set("title", value.title || "")
-            params.set("institution", value.institution || "")
-            params.set("issue_date", value.issue_date || "")
-            setURLsearchParams(params, { replace: true })
-        }, 300),
+      debounce((value: z.infer<typeof diplomaSchemaCreate>) => {
+        const params = new URLSearchParams();
+        params.set(
+          "student_id",
+          value.student_id.toLocaleString("fullwide", { useGrouping: false }) ||
+            ""
+        );
+        params.set("title", value.title || "");
+        params.set("institution", value.institution || "");
+        params.set("issue_date", value.issue_date || "");
+        setURLsearchParams(params, { replace: true });
+      }, 300),
     [setURLsearchParams]
-)
+  );
 
-useEffect(() => {
+  useEffect(() => {
     const subscription = form.watch((value) => {
-        debouncedUpdateParams(value)
-    })
+      debouncedUpdateParams(value);
+    });
     return () => {
-        subscription.unsubscribe()
-        debouncedUpdateParams.cancel()
-    }
-}, [form, debouncedUpdateParams])
+      subscription.unsubscribe();
+      debouncedUpdateParams.cancel();
+    };
+  }, [form, debouncedUpdateParams]);
 
   async function onSubmit(values: z.infer<typeof diplomaSchemaCreate>) {
-    
-    
-    diplomaService.create(values)
-      .then((response) => {
-        
-        toast.success("Diploma registered successfully!", {
-          description: (
+   
+    toast.promise(
+      diplomaService.create(values).then((res) => {
+        if (res.status && res.status !== 200) {
+          throw new Error(res.detail);
+        } else {
+          return res;
+        }
+      }),
+      {
+        loading: "Registering diploma...",
+        success: () => {
+          form.reset();
+          setUploadedFile(null);
+          return (
             <div className="mt-2 space-y-1">
               <p>
                 <strong>{values.title}</strong>
               </p>
               <p>Student ID: {values.student_id}</p>
               <p>Institution: {values.institution}</p>
-              <p>Issue Date: {new Date(values.issue_date).toLocaleDateString()}</p>
+              <p>
+                Issue Date: {new Date(values.issue_date).toLocaleDateString()}
+              </p>
               {uploadedFile && <p>File: {uploadedFile.name}</p>}
             </div>
-        
-          ),
-        })
-        console.log("Diploma registered successfully:", response)
-       
-        form.reset()
-        setUploadedFile(null)
-      })
-      .catch((error) => {
-        console.error("Failed to register diploma:", error)
-        toast.error("Failed to register diploma. Please try again.")
-      })
- 
-
-    // Reset form and file after successful submission
-    form.reset()
-    setUploadedFile(null)
+          );
+        },
+        error: (err) => `${err}`,
+      }
+    );
+    /* toast.promise(diplomaService.updateStatus(data).then(res => {
+        if(res.status && res.status !== 200){
+          throw new Error(res.detail)
+        }else {
+          navigateBackFlag = 1
+          return res
+        }
+      }), {
+        loading: 'Updating status...',
+        success:'Status updated successfully!',
+        error: (err) => `${err}`,
+      }); */
+    
   }
 
-   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0]   // ← actually grab the file
-    if (!file) return
+  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0]; // ← actually grab the file
+    if (!file) return;
 
     // size/type checks
     if (file.size > 10 * 1024 * 1024) {
-      toast.error("File size must be less than 10MB")
-      return
+      toast.error("File size must be less than 10MB");
+      return;
     }
-    const allowed = ["application/pdf","image/jpeg","image/png"]
+    const allowed = ["application/pdf", "image/jpeg", "image/png"];
     if (!allowed.includes(file.type)) {
-      toast.error("Please upload a PDF, JPEG, or PNG file")
-      return
+      toast.error("Please upload a PDF, JPEG, or PNG file");
+      return;
     }
 
-    setUploadedFile(file)
-    form.setValue("file", file, { shouldValidate: true })
-  }
+    setUploadedFile(file);
+    form.setValue("file", file, { shouldValidate: true });
+  };
 
   const removeFile = () => {
-    setUploadedFile(null)
+    setUploadedFile(null);
     // Reset the file input
-    const fileInput = document.getElementById("diploma-file") as HTMLInputElement
+    const fileInput = document.getElementById(
+      "diploma-file"
+    ) as HTMLInputElement;
     if (fileInput) {
-      fileInput.value = ""
+      fileInput.value = "";
     }
-  }
+  };
 
   return (
     <div className="min-h-screen flex items-center justify-center p-4">
@@ -130,8 +157,12 @@ useEffect(() => {
           <div className="mx-auto w-12 h-12 bg-muted rounded-full flex items-center justify-center">
             <FileText className="w-6 h-6" />
           </div>
-          <CardTitle className="text-2xl font-bold">Diploma Registration</CardTitle>
-          <CardDescription>Register a new diploma in the academic system</CardDescription>
+          <CardTitle className="text-2xl font-bold">
+            Diploma Registration
+          </CardTitle>
+          <CardDescription>
+            Register a new diploma in the academic system
+          </CardDescription>
         </CardHeader>
 
         <CardContent>
@@ -153,10 +184,14 @@ useEffect(() => {
                         min={0}
                         placeholder="Enter student ID"
                         {...field}
-                        onChange={(e) => field.onChange(Number.parseInt(e.target.value) || 0)}
+                        onChange={(e) =>
+                          field.onChange(Number.parseInt(e.target.value) || 0)
+                        }
                       />
                     </FormControl>
-                    <FormDescription>The unique identifier for the student</FormDescription>
+                    <FormDescription>
+                      The unique identifier for the student
+                    </FormDescription>
                     <FormMessage />
                   </FormItem>
                 )}
@@ -173,9 +208,14 @@ useEffect(() => {
                       Diploma Title
                     </FormLabel>
                     <FormControl>
-                      <Input placeholder="e.g., Bachelor of Science in Computer Science" {...field} />
+                      <Input
+                        placeholder="e.g., Bachelor of Science in Computer Science"
+                        {...field}
+                      />
                     </FormControl>
-                    <FormDescription>The full title of the diploma or degree</FormDescription>
+                    <FormDescription>
+                      The full title of the diploma or degree
+                    </FormDescription>
                     <FormMessage />
                   </FormItem>
                 )}
@@ -192,9 +232,14 @@ useEffect(() => {
                       Institution
                     </FormLabel>
                     <FormControl>
-                      <Input placeholder="e.g., University of Technology" {...field} />
+                      <Input
+                        placeholder="e.g., University of Technology"
+                        {...field}
+                      />
                     </FormControl>
-                    <FormDescription>The name of the educational institution</FormDescription>
+                    <FormDescription>
+                      The name of the educational institution
+                    </FormDescription>
                     <FormMessage />
                   </FormItem>
                 )}
@@ -213,7 +258,9 @@ useEffect(() => {
                     <FormControl>
                       <Input type="date" {...field} />
                     </FormControl>
-                    <FormDescription>The date when the diploma was issued</FormDescription>
+                    <FormDescription>
+                      The date when the diploma was issued
+                    </FormDescription>
                     <FormMessage />
                   </FormItem>
                 )}
@@ -224,15 +271,21 @@ useEffect(() => {
                 <label className="flex items-center gap-2 text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70">
                   <Upload className="w-4 h-4" />
                   Diploma Document
-                  <span className="text-muted-foreground font-normal">(Optional)</span>
+                  <span className="text-muted-foreground font-normal">
+                    (Optional)
+                  </span>
                 </label>
 
                 {!uploadedFile ? (
                   <div className=" relative border-2 border-dashed border-muted-foreground/25 rounded-lg p-6 text-center hover:border-muted-foreground/50 transition-colors">
                     <Upload className="w-8 h-8 mx-auto mb-2 text-muted-foreground" />
                     <div className="space-y-1">
-                      <p className="text-sm text-muted-foreground">Click to upload or drag and drop</p>
-                      <p className="text-xs text-muted-foreground">PDF, JPEG, PNG up to 10MB</p>
+                      <p className="text-sm text-muted-foreground">
+                        Click to upload or drag and drop
+                      </p>
+                      <p className="text-xs text-muted-foreground">
+                        PDF, JPEG, PNG up to 10MB
+                      </p>
                     </div>
                     <Input
                       id="diploma-file"
@@ -248,13 +301,21 @@ useEffect(() => {
                       <div className="flex items-center gap-3">
                         <FileText className="w-8 h-8 text-muted-foreground" />
                         <div>
-                          <p className="text-sm font-medium">{uploadedFile.name}</p>
+                          <p className="text-sm font-medium">
+                            {uploadedFile.name}
+                          </p>
                           <p className="text-xs text-muted-foreground">
                             {(uploadedFile.size / 1024 / 1024).toFixed(2)} MB
                           </p>
                         </div>
                       </div>
-                      <Button type="button" variant="ghost" size="sm" onClick={removeFile} className="h-8 w-8 p-0">
+                      <Button
+                        type="button"
+                        variant="ghost"
+                        size="sm"
+                        onClick={removeFile}
+                        className="h-8 w-8 p-0"
+                      >
                         <X className="w-4 h-4" />
                       </Button>
                     </div>
@@ -262,13 +323,18 @@ useEffect(() => {
                 )}
 
                 <p className="text-xs text-muted-foreground">
-                  Upload a scanned copy or digital version of the diploma (optional)
+                  Upload a scanned copy or digital version of the diploma
+                  (optional)
                 </p>
               </div>
 
               {/* Submit Button */}
               <div className="pt-4">
-                <Button type="submit" className="w-full" disabled={form.formState.isSubmitting}>
+                <Button
+                  type="submit"
+                  className="w-full"
+                  disabled={form.formState.isSubmitting}
+                >
                   {form.formState.isSubmitting ? (
                     <div className="flex items-center gap-2">
                       <div className="w-4 h-4 border-2 border-current border-t-transparent rounded-full animate-spin" />
@@ -287,5 +353,5 @@ useEffect(() => {
         </CardContent>
       </Card>
     </div>
-  )
+  );
 }

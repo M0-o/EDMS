@@ -18,7 +18,9 @@ export function useDiplomaService() {
         Authorization: `Bearer ${token}`,
       },
     })
-    return response.json()
+   const strResponse = await response.json()
+    strResponse.status = response.status
+    return strResponse
   }
 
   async function create(diploma: z.infer<typeof diplomaSchemaCreate>) {
@@ -41,17 +43,22 @@ export function useDiplomaService() {
       },
     })
    
-    return response.json()
+    const strResponse = await response.json()
+    strResponse.status = response.status
+    return strResponse
   }
 
   async function deleteById(id: number) {
     const token = await getToken()
-    await fetch(`${API_BASE}/diplomas/${id}`, {
+    const response = await fetch(`${API_BASE}/diplomas/${id}`, {
       method: 'DELETE',
       headers: {
         Authorization: `Bearer ${token}`,
       },
     })
+    const strResponse = await response.json()
+    strResponse.status = response.status
+    return strResponse
   }
 
   async function getOne(id: number): Promise<z.infer<typeof diplomaSchemaOut>> {
@@ -61,7 +68,9 @@ export function useDiplomaService() {
         Authorization: `Bearer ${token}`,
       },
     })
-    return response.json()
+    const strResponse = await response.json()
+    strResponse.status = response.status
+    return strResponse
   }
 
   async function updateStatus(newStatus: z.infer<typeof diplomaStatusCreateSchema>) {
@@ -74,7 +83,10 @@ export function useDiplomaService() {
       },
       body: JSON.stringify(newStatus),
     })
-    return response.json()
+    
+    const strResponse = await response.json()
+    strResponse.status = response.status
+    return strResponse
   }
   
   async function batchUpdateStatus(newStatus: z.infer<typeof batchDiplomaStatusCreateSchema>) {
@@ -87,7 +99,9 @@ export function useDiplomaService() {
       },
       body: JSON.stringify(newStatus),
     })
-    return response.json()
+    const strResponse = await response.json()
+    strResponse.status = response.status
+    return strResponse
   }
 
   async function getByStatus(status: string): Promise<z.infer<typeof diplomaSchemaOut>[]> {
@@ -97,7 +111,9 @@ export function useDiplomaService() {
         Authorization: `Bearer ${token}`,
       },
     })
-    return response.json()
+    const strResponse = await response.json()
+    strResponse.status = response.status
+    return strResponse
   }
 
   return { getAll, create, deleteById , getOne, updateStatus, getByStatus , batchUpdateStatus }

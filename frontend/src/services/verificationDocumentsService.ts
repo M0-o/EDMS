@@ -34,7 +34,9 @@ export function useVerificationDocumentsService() {
       body: formData,
     })
 
-    return response.json()
+    const strResponse = await response.json()
+    strResponse.status = response.status
+    return strResponse
   }
 
   return { uploadDocuments }

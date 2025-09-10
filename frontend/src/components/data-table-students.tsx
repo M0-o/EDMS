@@ -1,4 +1,4 @@
-import * as React from "react"
+import * as React from "react";
 import {
   closestCenter,
   DndContext,
@@ -9,31 +9,29 @@ import {
   useSensors,
   type DragEndEvent,
   type UniqueIdentifier,
-} from "@dnd-kit/core"
-import { restrictToVerticalAxis } from "@dnd-kit/modifiers"
+} from "@dnd-kit/core";
+import { restrictToVerticalAxis } from "@dnd-kit/modifiers";
 import {
   arrayMove,
   SortableContext,
   useSortable,
   verticalListSortingStrategy,
-} from "@dnd-kit/sortable"
-import { CSS } from "@dnd-kit/utilities"
+} from "@dnd-kit/sortable";
+import { CSS } from "@dnd-kit/utilities";
 import {
   IconChevronDown,
   IconChevronLeft,
   IconChevronRight,
   IconChevronsLeft,
   IconChevronsRight,
-  
   IconDotsVertical,
   IconGripVertical,
   IconLayoutColumns,
- 
   IconPlus,
-} from "@tabler/icons-react"
+} from "@tabler/icons-react";
 import {
- type ColumnDef,
- type ColumnFiltersState,
+  type ColumnDef,
+  type ColumnFiltersState,
   flexRender,
   getCoreRowModel,
   getFacetedRowModel,
@@ -44,14 +42,14 @@ import {
   type Row,
   type SortingState,
   useReactTable,
- type  VisibilityState,
-} from "@tanstack/react-table"
+  type VisibilityState,
+} from "@tanstack/react-table";
 
-import { z } from "zod"
-import { Link } from "react-router-dom"
+import { z } from "zod";
+import { Link } from "react-router-dom";
 
-import { Button } from "@/components/ui/button"
-import { Checkbox } from "@/components/ui/checkbox"
+import { Button } from "@/components/ui/button";
+import { Checkbox } from "@/components/ui/checkbox";
 
 import {
   DropdownMenu,
@@ -59,16 +57,16 @@ import {
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu"
-import { Input } from "@/components/ui/input"
-import { Label } from "@/components/ui/label"
+} from "@/components/ui/dropdown-menu";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from "@/components/ui/select"
+} from "@/components/ui/select";
 
 import {
   Table,
@@ -77,9 +75,9 @@ import {
   TableHead,
   TableHeader,
   TableRow,
-} from "@/components/ui/table"
-import { useSearchParams } from "react-router-dom"
-import {studentSchemaOut as studentSchema} from "@/schemas/studentSchemas"
+} from "@/components/ui/table";
+import { useSearchParams } from "react-router-dom";
+import { studentSchemaOut as studentSchema } from "@/schemas/studentSchemas";
 export const schema = z.object({
   id: z.number(),
   header: z.string(),
@@ -88,13 +86,15 @@ export const schema = z.object({
   target: z.string(),
   limit: z.string(),
   reviewer: z.string(),
-})
-import debounce from 'lodash/debounce'
+});
+import debounce from "lodash/debounce";
+import { downloadCsv } from "@/utils/exportToCsv";
+import { convertToCsv } from "@/utils/exportToCsv";
 // Create a separate component for the drag handle
 function DragHandle({ id }: { id: number }) {
   const { attributes, listeners } = useSortable({
     id,
-  })
+  });
 
   return (
     <Button
@@ -107,15 +107,13 @@ function DragHandle({ id }: { id: number }) {
       <IconGripVertical className="text-muted-foreground size-3" />
       <span className="sr-only">Drag to reorder</span>
     </Button>
-  )
+  );
 }
-
-
 
 function DraggableRow({ row }: { row: Row<z.infer<typeof studentSchema>> }) {
   const { transform, transition, setNodeRef, isDragging } = useSortable({
     id: row.original.id,
-  })
+  });
 
   return (
     <TableRow
@@ -134,116 +132,133 @@ function DraggableRow({ row }: { row: Row<z.infer<typeof studentSchema>> }) {
         </TableCell>
       ))}
     </TableRow>
-  )
+  );
 }
 
-
-export function StudentsDataTable({ pdata , handleDeleteStudent }: { pdata: z.infer<typeof studentSchema>[] , handleDeleteStudent: (id: number) => void}) {
-   const [data, setData] = React.useState<z.infer<typeof studentSchema>[]>([])
+export function StudentsDataTable({
+  pdata,
+  handleDeleteStudent,
+}: {
+  pdata: z.infer<typeof studentSchema>[];
+  handleDeleteStudent: (id: number) => void;
+}) {
+  const [data, setData] = React.useState<z.infer<typeof studentSchema>[]>([]);
   React.useEffect(() => {
-    setData(pdata)
-  }, [pdata])
-  const [URLsearchParams, setURLsearchParams] = useSearchParams()
-  const [rowSelection, setRowSelection] = React.useState({})
+    setData(pdata);
+  }, [pdata]);
+  const [URLsearchParams, setURLsearchParams] = useSearchParams();
+  const [rowSelection, setRowSelection] = React.useState({});
   const [columnVisibility, setColumnVisibility] =
     React.useState<VisibilityState>({
-      first_name : URLsearchParams.get("first_name") != "false" ,
+      first_name: URLsearchParams.get("first_name") != "false",
       last_name: URLsearchParams.get("last_name") != "false",
       cne: URLsearchParams.get("cne") != "false",
       apogee: URLsearchParams.get("apogee") != "false",
       email: URLsearchParams.get("email") != "false",
-    })
-  const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>(
-    [
-              {
-                id: "first_name",
-                value: URLsearchParams.get("search") || "",
-              },
-            ]
-  )
-  const [sorting, setSorting] = React.useState<SortingState>([])
+    });
+  const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>([
+    {
+      id: "first_name",
+      value: URLsearchParams.get("search") || "",
+    },
+  ]);
+  const [sorting, setSorting] = React.useState<SortingState>([]);
   const [pagination, setPagination] = React.useState({
     pageIndex: 0,
     pageSize: 10,
-  })
-  const sortableId = React.useId()
+  });
+  const sortableId = React.useId();
   const sensors = useSensors(
     useSensor(MouseSensor, {}),
     useSensor(TouchSensor, {}),
     useSensor(KeyboardSensor, {})
-  )
+  );
 
-  const studentColumns: ColumnDef<z.infer<typeof studentSchema>>[] = React.useMemo(()=> [
-   {
-    id: "drag",
-    header: () => null,
-    cell: ({ row }) => <DragHandle id={row.original.id} />,
-  },
- {
-    id: "select",
-    header: ({ table }) => (
-      <Checkbox
-        checked={table.getIsAllPageRowsSelected()}
-        onCheckedChange={(value) => table.toggleAllPageRowsSelected(!!value)}
-      />
-    ),
-    cell: ({ row }) => (
-      <Checkbox
-        checked={row.getIsSelected()}
-        onCheckedChange={(value) => row.toggleSelected(!!value)}
-      />
-    ),
-  },
-  {
-    accessorKey: "first_name",
-    header: "First Name",
-    cell: ({ row }) => (
-      <Link to={`/students/${row.original.id}`}>
-        {row.getValue("first_name")}
-      </Link>
-    ),
-  },
-  {
-    accessorKey: "last_name", 
-    header: "Last Name",
-  },
-  {
-    accessorKey: "cne",
-    header: "CNE",
-  },
-  {
-    accessorKey: "apogee",
-    header: "Apogee",
-  },
-  {
-    accessorKey: "email",
-    header: "Email",
-  },
-  {
-    id: "actions",
-    cell: ({ row }) => (
-      <DropdownMenu>
-        <DropdownMenuTrigger asChild>
-          <Button variant="ghost" size="icon">
-            <IconDotsVertical />
-          </Button>
-        </DropdownMenuTrigger>
-        <DropdownMenuContent>
-          <DropdownMenuItem>Edit</DropdownMenuItem>
-          <DropdownMenuItem>View Diplomas</DropdownMenuItem>
-          <DropdownMenuItem variant="destructive" onClick={() => {handleDeleteStudent(Number(row.id));
-            setData((data) => data.filter((d) => d.id !== Number(row.id)));
-          }}>Delete</DropdownMenuItem>
-        </DropdownMenuContent>
-      </DropdownMenu>
-    ),
-  }
-] , [])
+  const studentColumns: ColumnDef<z.infer<typeof studentSchema>>[] =
+    React.useMemo(
+      () => [
+        {
+          id: "drag",
+          header: () => null,
+          cell: ({ row }) => <DragHandle id={row.original.id} />,
+        },
+        {
+          id: "select",
+          header: ({ table }) => (
+            <Checkbox
+              checked={table.getIsAllPageRowsSelected()}
+              onCheckedChange={(value) =>
+                table.toggleAllPageRowsSelected(!!value)
+              }
+            />
+          ),
+          cell: ({ row }) => (
+            <Checkbox
+              checked={row.getIsSelected()}
+              onCheckedChange={(value) => row.toggleSelected(!!value)}
+            />
+          ),
+        },
+        {
+          accessorKey: "first_name",
+          header: "First Name",
+          cell: ({ row }) => (
+            <Link to={`/students/${row.original.id}`}>
+              {row.getValue("first_name")}
+            </Link>
+          ),
+        },
+        {
+          accessorKey: "last_name",
+          header: "Last Name",
+        },
+        {
+          accessorKey: "cne",
+          header: "CNE",
+        },
+        {
+          accessorKey: "apogee",
+          header: "Apogee",
+        },
+        {
+          accessorKey: "email",
+          header: "Email",
+        },
+        {
+          id: "actions",
+          cell: ({ row }) => (
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <Button variant="ghost" size="icon">
+                  <IconDotsVertical />
+                </Button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent>
+                <DropdownMenuItem>Edit</DropdownMenuItem>
+                <DropdownMenuItem>View Diplomas</DropdownMenuItem>
+                <DropdownMenuItem
+                  variant="destructive"
+                  onClick={() => {
+                    handleDeleteStudent(Number(row.id));
+                    setData((data) =>
+                      data.filter((d) => d.id !== Number(row.id))
+                    );
+                  }}
+                >
+                  Delete
+                </DropdownMenuItem>
+              </DropdownMenuContent>
+            </DropdownMenu>
+          ),
+        },
+      ],
+      []
+    );
 
   const dataIds = React.useMemo<UniqueIdentifier[]>(
     () => data?.map(({ id }) => id) || [],
     [data]
-  )
+  );
 
   const table = useReactTable({
     data,
@@ -268,108 +283,118 @@ export function StudentsDataTable({ pdata , handleDeleteStudent }: { pdata: z.in
     getSortedRowModel: getSortedRowModel(),
     getFacetedRowModel: getFacetedRowModel(),
     getFacetedUniqueValues: getFacetedUniqueValues(),
-  })
+  });
 
-function handleDragEnd(event: DragEndEvent) {
-    const { active, over } = event
+  function handleDragEnd(event: DragEndEvent) {
+    const { active, over } = event;
     if (active && over && active.id !== over.id) {
       setData((data) => {
-        const oldIndex = dataIds.indexOf(active.id)
-        const newIndex = dataIds.indexOf(over.id)
-        return arrayMove(data, oldIndex, newIndex)
-      })
+        const oldIndex = dataIds.indexOf(active.id);
+        const newIndex = dataIds.indexOf(over.id);
+        return arrayMove(data, oldIndex, newIndex);
+      });
     }
   }
-    // Set the search params for filtering
+  // Set the search params for filtering
   //t the initial filter based on URL search params
-   const handleSearch = React.useMemo(
+  const handleSearch = React.useMemo(
     () =>
       debounce((value: string) => {
-        setURLsearchParams(prev => {
-          const newParams = new URLSearchParams(prev)
-          newParams.set("search", value)
-          return newParams
-        }, { replace: true })
-        table.setColumnFilters([{ id: "first_name", value }])
+        setURLsearchParams(
+          (prev) => {
+            const newParams = new URLSearchParams(prev);
+            newParams.set("search", value);
+            return newParams;
+          },
+          { replace: true }
+        );
+        table.setColumnFilters([{ id: "first_name", value }]);
       }, 300),
     [setURLsearchParams, table]
-  )
+  );
 
   // clean up on unmount
   React.useEffect(() => {
     return () => {
-      handleSearch.cancel()
-    }
-  }, [handleSearch])
+      handleSearch.cancel();
+    };
+  }, [handleSearch]);
 
   return (
     <div className=" mx-5">
-    <div className="w-full">
-      <div className="flex items-center justify-between py-4">
-        <Input
-          placeholder="Search students..."
-          className="max-w-sm"
-          defaultValue={URLsearchParams.get("search") || ""}
-          onChange={(e) => {
-            handleSearch(e.target.value)
-            
-          }}
-        />
-        <div className="gap-2 flex items-center">
-        <DropdownMenu>
-            <DropdownMenuTrigger asChild>
-              <Button variant="outline" size="sm">
-                <IconLayoutColumns />
-                <span className="hidden lg:inline">Customize Columns</span>
-                <span className="lg:hidden">Columns</span>
-                <IconChevronDown />
-              </Button>
-            </DropdownMenuTrigger>
-            <DropdownMenuContent align="end" className="w-56">
-              {table
-                .getAllColumns()
-                .filter(
-                  (column) =>
-                    typeof column.accessorFn !== "undefined" &&
-                    column.getCanHide()
-                )
-                .map((column) => {
-                  return (
-                    <DropdownMenuCheckboxItem
-                      key={column.id}
-                      className="capitalize"
-                      checked={column.getIsVisible()}
-                      onCheckedChange={(value) =>{
-                        column.toggleVisibility(!!value)
-                        setURLsearchParams((prev) => {
-                          const newParams = new URLSearchParams(prev)
-                          newParams.set(column.id, value ? "true" : "false")
-                          return newParams
-                        })
-                      }}
-                    >
-                      {column.id}
-                    </DropdownMenuCheckboxItem>
+      <div className="w-full">
+        <div className="flex items-center justify-between py-4">
+          <Input
+            placeholder="Search students..."
+            className="max-w-sm"
+            defaultValue={URLsearchParams.get("search") || ""}
+            onChange={(e) => {
+              handleSearch(e.target.value);
+            }}
+          />
+          <div className="gap-2 flex items-center">
+            <Button
+              variant="link"
+              onClick={() =>
+                downloadCsv(`students${Date.now()}.csv`, convertToCsv(data))
+              }
+            >
+              Export to CSV
+            </Button>
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <Button variant="outline" size="sm">
+                  <IconLayoutColumns />
+                  <span className="hidden lg:inline">Customize Columns</span>
+                  <span className="lg:hidden">Columns</span>
+                  <IconChevronDown />
+                </Button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent align="end" className="w-56">
+                {table
+                  .getAllColumns()
+                  .filter(
+                    (column) =>
+                      typeof column.accessorFn !== "undefined" &&
+                      column.getCanHide()
                   )
-                })}
-            </DropdownMenuContent>
-          </DropdownMenu>
-        <Button variant="outline" size="sm" >
-          <IconPlus />
-          <Link to="/students/create">Add Student</Link>
-        </Button>
+                  .map((column) => {
+                    return (
+                      <DropdownMenuCheckboxItem
+                        key={column.id}
+                        className="capitalize"
+                        checked={column.getIsVisible()}
+                        onCheckedChange={(value) => {
+                          column.toggleVisibility(!!value);
+                          setURLsearchParams((prev) => {
+                            const newParams = new URLSearchParams(prev);
+                            newParams.set(column.id, value ? "true" : "false");
+                            return newParams;
+                          });
+                        }}
+                      >
+                        {column.id}
+                      </DropdownMenuCheckboxItem>
+                    );
+                  })}
+              </DropdownMenuContent>
+            </DropdownMenu>
+            <Button variant="outline" size="sm">
+              <IconPlus />
+              <Link to="/students/create">Add Student</Link>
+            </Button>
+          </div>
         </div>
-      </div>
-      
-      <div className="overflow-hidden rounded-lg border" >
-        <DndContext
+
+        <div className="overflow-hidden rounded-lg border">
+          <DndContext
             collisionDetection={closestCenter}
             modifiers={[restrictToVerticalAxis]}
             onDragEnd={handleDragEnd}
             sensors={sensors}
             id={sortableId}
           >
-      <Table>
+            <Table>
               <TableHeader className="bg-muted sticky top-0 z-10">
                 {table.getHeaderGroups().map((headerGroup) => (
                   <TableRow key={headerGroup.id}>
@@ -383,7 +408,7 @@ function handleDragEnd(event: DragEndEvent) {
                                 header.getContext()
                               )}
                         </TableHead>
-                      )
+                      );
                     })}
                   </TableRow>
                 ))}
@@ -410,10 +435,10 @@ function handleDragEnd(event: DragEndEvent) {
                 )}
               </TableBody>
             </Table>
-            </DndContext>
-      </div>
-     
-       <div className="flex items-center justify-between px-4 py-4">
+          </DndContext>
+        </div>
+
+        <div className="flex items-center justify-between px-4 py-4">
           <div className="text-muted-foreground hidden flex-1 text-sm lg:flex">
             {table.getFilteredSelectedRowModel().rows.length} of{" "}
             {table.getFilteredRowModel().rows.length} row(s) selected.
@@ -426,7 +451,7 @@ function handleDragEnd(event: DragEndEvent) {
               <Select
                 value={`${table.getState().pagination.pageSize}`}
                 onValueChange={(value) => {
-                  table.setPageSize(Number(value))
+                  table.setPageSize(Number(value));
                 }}
               >
                 <SelectTrigger size="sm" className="w-20" id="rows-per-page">
@@ -489,12 +514,8 @@ function handleDragEnd(event: DragEndEvent) {
               </Button>
             </div>
           </div>
+        </div>
+      </div>
     </div>
-
-    </div>
-    </div>
-  )
+  );
 }
-
-
-

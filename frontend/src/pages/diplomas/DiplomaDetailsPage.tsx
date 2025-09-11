@@ -10,6 +10,7 @@ import { useDiplomaService } from "@/services/diplomaService"
 import { z } from "zod"
 import { diplomaSchemaOut } from "@/schemas/diplomaSchemas"
 import { useStudentService } from "@/services/studentService"
+import { useDocumentService } from "@/services/documentService"
 
 function formatDate(dateString: string) {
   return new Date(dateString).toLocaleDateString('en-US', {
@@ -146,7 +147,7 @@ export default function DiplomaDetailsPage() {
   const student = studentInfo
   const currentStatus = diploma?.current_status
   const navigate = useNavigate()
-
+  const DocumentService = useDocumentService()
    useEffect( () => {
      const fetchStudentMinimal = async (student_id: number) => {
        const student = await studentService.getOneMinimal(student_id).catch((error) => {
@@ -163,7 +164,7 @@ export default function DiplomaDetailsPage() {
           })
           setDiploma(diploma)
           fetchStudentMinimal(diploma.student_id)
-          console.log("Fetched diploma:", diploma)
+          
         }
 
         fetchDiploma()
@@ -176,6 +177,7 @@ export default function DiplomaDetailsPage() {
       </div>
     )
   }
+  
   return (
     <div className="container mx-auto p-6 max-w-6xl">
       {/* Header with Back Button */}
@@ -190,7 +192,7 @@ export default function DiplomaDetailsPage() {
         {/* Main Content */}
         <div className="lg:col-span-2 space-y-6">
           {/* Diploma Information */}
-          <Card>
+          <Card className="min-w-fit">
             <CardHeader>
               <div className="flex items-start justify-between">
                 <div className="flex items-start gap-4">
@@ -237,21 +239,21 @@ export default function DiplomaDetailsPage() {
 
           {/* Document Section */}
           {diploma.document && (
-            <Card>
+            <Card className="min-w-fit">
               <CardHeader>
                 <CardTitle className="flex items-center gap-2">
                   <FileText className="h-5 w-5" />
                   Diploma Document
                 </CardTitle>
               </CardHeader>
-              <CardContent>
+              <CardContent >
                 <div className="flex items-center justify-between p-4 bg-gray-50 dark:bg-zinc-800 rounded-lg">
                   <div className="flex items-center gap-4">
                     <div className="p-3 bg-white dark:bg-zinc-900 rounded-lg shadow-sm">
                       <FileText className="h-6 w-6 text-blue-600" />
                     </div>
                     <div>
-                      <p className="font-medium text-lg">{diploma.document.original_filename}</p>
+                      <p className="font-medium text-lg">{diploma.document.original_filename.length > 20 ? `${diploma.document.original_filename.slice(0, 27)}...` : diploma.document.original_filename}</p>
                       <p className="text-sm text-muted-foreground">
                         Uploaded: {formatDateTime(diploma.document.uploaded_at)}
                       </p>
@@ -272,7 +274,10 @@ export default function DiplomaDetailsPage() {
                     <Button 
                       variant="default" 
                       size="sm"
-                      onClick={() => window.open(diploma.document?.download_url, '_blank')}
+                      onClick={async () => {
+                        DocumentService.downloadDocument(diploma.document?.download_url, diploma.document?.original_filename)
+                      
+                      }}
                     >
                       <Download className="h-4 w-4 mr-2" />
                       Download
@@ -284,7 +289,7 @@ export default function DiplomaDetailsPage() {
           )}
 
           {/* Status History */}
-          <Card>
+          <Card className="min-w-fit">
             <CardHeader>
               <CardTitle className="flex items-center gap-2">
                 <History className="h-5 w-5" />
@@ -333,7 +338,7 @@ export default function DiplomaDetailsPage() {
         {/* Sidebar */}
         <div className="space-y-6">
           {/* Student Information */}
-          <Card>
+          <Card className="min-w-fit">
             <CardHeader>
               <CardTitle className="flex items-center gap-2">
                 <User className="h-5 w-5" />
@@ -366,12 +371,12 @@ export default function DiplomaDetailsPage() {
           </Card>
 
           {/* Quick Actions */}
-          <Card>
+          <Card className="min-w-fit">
             <CardHeader>
               <CardTitle>Quick Actions</CardTitle>
             </CardHeader>
             <CardContent className="space-y-2">
-              <Button variant="outline" className="w-full justify-start" size="sm">
+              <Button variant="outline" className="w-full justify-start" size="sm" onClick={() =>navigate(`/diplomas/${diploma.id}/updateStatus`)}>
                 <CheckCircle className="h-4 w-4 mr-2" />
                 Update Status
               </Button>
@@ -387,7 +392,7 @@ export default function DiplomaDetailsPage() {
           </Card>
 
           {/* Diploma Stats */}
-          <Card>
+          <Card className="min-w-fit">
             <CardHeader>
               <CardTitle>Diploma Statistics</CardTitle>
             </CardHeader>

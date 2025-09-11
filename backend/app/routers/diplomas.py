@@ -16,7 +16,7 @@ router = APIRouter()
 
 @router.post("/", response_model=DiplomaOut)
 async def create_diploma(
-    student_id: int         = Form(...),
+    cne: str        = Form(...),
     title: str              = Form(...),
     institution: str        = Form(...),
     issue_date: date        = Form(...),
@@ -24,12 +24,12 @@ async def create_diploma(
     user_id: str = Depends(get_current_user),
     db: Session             = Depends(get_db),
 ):
-    student = db.query(Student).filter(Student.id == student_id).first()
+    student = db.query(Student).filter(Student.cne == cne).first()
     if not student:
         raise HTTPException(status_code=404, detail="Student not found")
     
     db_diploma = Diploma(
-        student_id=student_id,
+        student_id=student.id,
         title=title,
         institution=institution,
         issue_date=issue_date,
@@ -43,12 +43,12 @@ async def create_diploma(
     # now handle the uploaded file if present
     if file:
         
-        relative_path = save_file_to_disc(student_id, file, "new_diploma")
+        relative_path = save_file_to_disc(student.id, file, "new_diploma")
         #save document information to database
         db_document = Document(
             original_filename=file.filename,
             type="new_diploma",
-            student_id=student_id,
+            student_id=student.id,
             file_path=relative_path,
             uploaded_by_clerk_user_id=user_id,  
         )

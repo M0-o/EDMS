@@ -3,13 +3,13 @@ import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Separator } from "@/components/ui/separator"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
-import { CalendarDays, Download, GraduationCap, Mail, User, FileText, Building2, CheckCircle, XCircle } from 'lucide-react'
+import { CalendarDays, Download, GraduationCap, Mail, User, FileText, Building2, CheckCircle, XCircle , Eye} from 'lucide-react'
 import {useParams} from "react-router-dom"
 import {useStudentService} from "@/services/studentService"
 import {useState , useEffect} from "react"
 import {studentSchemaOut} from "@/schemas/studentSchemas"
 import {z} from "zod"
-import { useNavigate } from "react-router-dom"
+import { useDocumentService } from "@/services/documentService"
 
 function formatDate(dateString: string) {
   return new Date(dateString).toLocaleDateString('en-US', {
@@ -63,7 +63,7 @@ export default function StudentDetailsPage() {
   const { studentId }= useParams();
   const studentService = useStudentService()
   const [student, setStudent] = useState<z.infer<typeof studentSchemaOut> | null>(null)
-  const navigate = useNavigate()
+  const DocumentService = useDocumentService()
   useEffect(() => {
       const fetchStudent = async () => {
         const student = await studentService.getOne(Number.parseInt(studentId || "1")).catch((error) => {
@@ -191,15 +191,26 @@ export default function StudentDetailsPage() {
                           </p>
                         </div>
                       </div>
+                      <div className="flex gap-1">
                       <Button 
                         variant="outline" 
                         className="dark:border-zinc-800"
                         size="sm"
                         onClick={() => window.open(diploma.document?.download_url, '_blank')}
                       >
+                        <Eye className="h-4 w-4 mr-2" />
+                        Preview
+                      </Button>
+                      <Button 
+                        variant="outline" 
+                        className="dark:border-zinc-800"
+                        size="sm"
+                        onClick={() => DocumentService.downloadDocument(diploma.document?.download_url, diploma.document?.original_filename)}
+                      >
                         <Download className="h-4 w-4 mr-2" />
                         Download
                       </Button>
+                      </div>
                     </div>
                   </CardContent>
                 </>
@@ -262,15 +273,27 @@ export default function StudentDetailsPage() {
                   </div>
                   <div className="flex items-center gap-2">
                     {doc && (
+                      <div className="flex gap-1">
+
+                      <Button 
+                        variant="outline" 
+                        className="dark:border-zinc-800"
+                        size="sm"
+                        onClick={() => window.open(doc?.download_url, '_blank')}
+                      >
+                        <Eye className="h-4 w-4 mr-2" />
+                        Preview
+                      </Button>
                       <Button 
                         variant="outline"
                         className="dark:border-zinc-800" 
                         size="sm"
-                        onClick={() => window.open(doc.download_url, '_blank')}
+                        onClick={() => DocumentService.downloadDocument(doc?.download_url, doc?.original_filename)}
                       >
                         <Download className="h-4 w-4 mr-2 " />
                         Download
                       </Button>
+                      </div>
                     )}
                   </div>
                 </div>

@@ -276,9 +276,6 @@ export function DiplomasDataTable({
                 </Button>
               </DropdownMenuTrigger>
               <DropdownMenuContent>
-                <DropdownMenuItem>Edit</DropdownMenuItem>
-                <DropdownMenuItem>View Details</DropdownMenuItem>
-                <DropdownMenuItem>Download</DropdownMenuItem>
                 <DropdownMenuItem
                   className="text-destructive"
                   onClick={() => {

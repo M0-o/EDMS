@@ -10,8 +10,6 @@ export default function uploadDocumentsPage(){
 
     return(
         <div className="flex flex-col items-center justify-center mx-auto mt-10">
-          
-            <h1 className="text-2xl font-bold mb-4">Upload Verification Documents</h1>
             <p className="mb-6 text-center">Please upload the necessary verification documents for student ID: {studentId}</p>
             <VerificationDocumentsForm studentId={studentId} />
         </div>

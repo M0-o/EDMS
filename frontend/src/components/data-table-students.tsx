@@ -46,7 +46,7 @@ import {
 } from "@tanstack/react-table";
 
 import { z } from "zod";
-import { Link } from "react-router-dom";
+import { Link, useNavigate} from "react-router-dom";
 
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
@@ -173,7 +173,7 @@ export function StudentsDataTable({
     useSensor(TouchSensor, {}),
     useSensor(KeyboardSensor, {})
   );
-
+ const navigate = useNavigate()
   const studentColumns: ColumnDef<z.infer<typeof studentSchema>>[] =
     React.useMemo(
       () => [
@@ -234,8 +234,15 @@ export function StudentsDataTable({
                 </Button>
               </DropdownMenuTrigger>
               <DropdownMenuContent>
-                <DropdownMenuItem>Edit</DropdownMenuItem>
-                <DropdownMenuItem>View Diplomas</DropdownMenuItem>
+                <DropdownMenuItem
+                  
+                  onClick={() => {  
+                    navigate(`/verification-documents/${row.id}`);
+                   
+                  }}
+                >
+                  Add verification documents
+                </DropdownMenuItem>
                 <DropdownMenuItem
                   variant="destructive"
                   onClick={() => {
@@ -247,6 +254,7 @@ export function StudentsDataTable({
                 >
                   Delete
                 </DropdownMenuItem>
+                {/*"verification-documents/:studentId" */}
               </DropdownMenuContent>
             </DropdownMenu>
           ),

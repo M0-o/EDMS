@@ -25,7 +25,13 @@ ssl_context = ssl.create_default_context()
 ssl_context.check_hostname = False
 ssl_context.verify_mode = ssl.CERT_NONE
 
-app.mount("/uploads", StaticFiles(directory="uploads"), name="uploads")
+class DevStaticFiles(StaticFiles):
+    def file_response(self , full_path , stat_result ,scope , status_code=200):
+         response = super().file_response(full_path, stat_result, scope, status_code)
+         response.headers["Cache-Control"] = "no-cache, no-store, must-revalidate"
+         return response
+    
+app.mount("/uploads", DevStaticFiles(directory="uploads"), name="uploads")
 
 app.include_router(diplomas.router, prefix="/diplomas", tags=["Diplomas"])
 app.include_router(students.router , prefix="/students", tags=["Students"])

@@ -10,8 +10,7 @@ export default function BatchUpdateDiplomaStatusPage() {
   }
 
   return (
-    <div className="flex flex-col gap-4 py-4 md:gap-6 md:py-6">
-      <h1 className="text-2xl font-bold">Update Diploma Status</h1>
+    <div className="flex flex-col justify-center h-screen my-[-80px]">
       <BatchDiplomaStatusForm diplomaIds={JSON.parse(decodeURIComponent(diplomaIds)).map(Number)} />
     </div>
   )

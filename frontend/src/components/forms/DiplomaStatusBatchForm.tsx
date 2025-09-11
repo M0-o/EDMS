@@ -28,7 +28,7 @@ import {
 
 import { batchDiplomaStatusCreateSchema } from "@/schemas/diplomaStatusSchemas"
 import { useDiplomaService } from "@/services/diplomaService"
-import { useNavigate } from "react-router-dom"
+import { toast } from "sonner"
 
 // Status options based on the enum
 const statusOptions = [
@@ -56,7 +56,6 @@ export default function BatchDiplomaStatusForm({
 
   const [URLsearchParams, setURLsearchParams] = useSearchParams()
   const diplomaService = useDiplomaService()
-  const navigate = useNavigate()
   const form = useForm<z.infer<typeof batchDiplomaStatusCreateSchema>>({
     resolver: zodResolver(batchDiplomaStatusCreateSchema),
     defaultValues: {
@@ -98,10 +97,18 @@ export default function BatchDiplomaStatusForm({
 
  async function onFormSubmit(data: z.infer<typeof batchDiplomaStatusCreateSchema>) {
     
-  
-  const response = await diplomaService.batchUpdateStatus(data)
-
-  navigate(-1)
+  toast.promise(diplomaService.batchUpdateStatus(data).then(res => {
+    if(res.status && res.status !== 200){
+      throw new Error(res.detail)
+    }else {
+      
+      return res
+    }
+  }), {
+    loading: 'Updating status...',
+    success:'Status updated successfully!',
+    error: (err) => `${err}`,
+  });
   }
 
   const selectedStatus = statusOptions.find((option) => option.value === form.getValues().status)

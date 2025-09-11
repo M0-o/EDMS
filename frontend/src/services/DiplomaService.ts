@@ -26,7 +26,7 @@ export function useDiplomaService() {
   async function create(diploma: z.infer<typeof diplomaSchemaCreate>) {
     const token = await getToken()
     const formData = new FormData()
-    formData.append("student_id", diploma.student_id.toString())
+    formData.append("cne", diploma.cne)
     formData.append("title", diploma.title)
     formData.append("institution", diploma.institution)
     formData.append("issue_date", diploma.issue_date)

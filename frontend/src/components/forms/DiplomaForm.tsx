@@ -36,7 +36,7 @@ export default function DiplomaForm() {
   const [URLsearchParams, setURLsearchParams] = useSearchParams();
   const diplomaService = useDiplomaService();
   const initialValues = {
-    student_id: Number(URLsearchParams.get("student_id")) || 0,
+    cne: URLsearchParams.get("cne") || "",
     title: URLsearchParams.get("title") || "",
     institution: URLsearchParams.get("institution") || "",
     issue_date: URLsearchParams.get("issue_date") || "",
@@ -51,9 +51,8 @@ export default function DiplomaForm() {
       debounce((value: z.infer<typeof diplomaSchemaCreate>) => {
         const params = new URLSearchParams();
         params.set(
-          "student_id",
-          value.student_id.toLocaleString("fullwide", { useGrouping: false }) ||
-            ""
+          "cne",
+          value.cne || ""
         );
         params.set("title", value.title || "");
         params.set("institution", value.institution || "");
@@ -74,7 +73,6 @@ export default function DiplomaForm() {
   }, [form, debouncedUpdateParams]);
 
   async function onSubmit(values: z.infer<typeof diplomaSchemaCreate>) {
-   
     toast.promise(
       diplomaService.create(values).then((res) => {
         if (res.status && res.status !== 200) {
@@ -93,7 +91,7 @@ export default function DiplomaForm() {
               <p>
                 <strong>{values.title}</strong>
               </p>
-              <p>Student ID: {values.student_id}</p>
+              <p>CNE: {values.cne}</p>
               <p>Institution: {values.institution}</p>
               <p>
                 Issue Date: {new Date(values.issue_date).toLocaleDateString()}
@@ -105,19 +103,6 @@ export default function DiplomaForm() {
         error: (err) => `${err}`,
       }
     );
-    /* toast.promise(diplomaService.updateStatus(data).then(res => {
-        if(res.status && res.status !== 200){
-          throw new Error(res.detail)
-        }else {
-          navigateBackFlag = 1
-          return res
-        }
-      }), {
-        loading: 'Updating status...',
-        success:'Status updated successfully!',
-        error: (err) => `${err}`,
-      }); */
-    
   }
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -169,20 +154,20 @@ export default function DiplomaForm() {
           <Form {...form}>
             <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
               {/* Student ID */}
-              <FormField
+              {/*  <FormField
                 control={form.control}
-                name="student_id"
+                name="cne"
                 render={({ field }) => (
                   <FormItem>
                     <FormLabel className="flex items-center gap-2">
                       <Hash className="w-4 h-4" />
-                      Student ID
+                      CNE
                     </FormLabel>
                     <FormControl>
                       <Input
                         type="number"
                         min={0}
-                        placeholder="Enter student ID"
+                        placeholder="Enter CNE"
                         {...field}
                         onChange={(e) =>
                           field.onChange(Number.parseInt(e.target.value) || 0)
@@ -191,6 +176,29 @@ export default function DiplomaForm() {
                     </FormControl>
                     <FormDescription>
                       The unique identifier for the student
+                    </FormDescription>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              /> */}
+              <FormField
+                control={form.control}
+                name="cne"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel className="flex items-center gap-2">
+                      <Hash className="w-4 h-4" />
+                      CNE (National Student Code)
+                    </FormLabel>
+                    <FormControl>
+                      <Input
+                        placeholder="A123456789"
+                        className="h-11 font-mono"
+                        {...field}
+                      />
+                    </FormControl>
+                    <FormDescription>
+                      Format: Letter followed by 9 digits (e.g., A123456789)
                     </FormDescription>
                     <FormMessage />
                   </FormItem>

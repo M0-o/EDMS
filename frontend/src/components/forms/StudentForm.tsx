@@ -78,14 +78,17 @@ export default function StudentForm() {
       ...values,
       email: values.email === "" ? undefined : values.email,
     };
-    // Call the create method from your service
-    studentService
-      .create(submitData)
-      .then((data) => {
-        console.log("Student created successfully:", data);
-        //show success toast and redirect to students page using react router
-        toast.success("Student registered successfully!", {
-          description: (
+    toast.promise(
+      studentService.create(submitData).then((res) => {
+        if (res.status && res.status !== 200) {
+          throw new Error(res.detail);
+        } else return res;
+      }),
+      {
+        loading: "Registering student...",
+        success: (res) => {
+          form.reset();
+          return (
             <div className="mt-2 space-y-1">
               <p>
                 <strong>
@@ -96,19 +99,15 @@ export default function StudentForm() {
               <p>Apogee: {submitData.apogee}</p>
               {submitData.email && <p>Email: {submitData.email}</p>}
             </div>
-          ),
-        });
-      })
-      .catch((error) => {
-        console.error("Error creating student:", error);
-        toast.error("Failed to register student. Please try again.");
-      });
-
-    form.reset();
+          );
+        },
+        error: (err) => `Error: ${err.message}`,
+      }
+    );
   }
 
   return (
-    <div className="min-h-screen  flex items-center justify-center p-4">
+    <div className="flex items-center justify-center p-4">
       <Card className="w-full max-w-2xl shadow-xl">
         <CardHeader className="text-center space-y-2">
           <div className="mx-auto w-12 h-12 rounded-full flex items-center justify-center">

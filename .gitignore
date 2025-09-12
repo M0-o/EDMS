@@ -50,3 +50,6 @@ backend/alembic/versions/*.pyc
 uploads
 internshipReport.md
 *.tex
+*.pdf
+*.gz
+*.csv

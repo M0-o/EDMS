@@ -90,6 +90,8 @@ export const schema = z.object({
 import debounce from "lodash/debounce";
 import { downloadCsv } from "@/utils/exportToCsv";
 import { convertToCsv } from "@/utils/exportToCsv";
+import CSVInput from "@/utils/CSVInput";
+
 // Create a separate component for the drag handle
 function DragHandle({ id }: { id: number }) {
   const { attributes, listeners } = useSortable({
@@ -341,6 +343,7 @@ export function StudentsDataTable({
             }}
           />
           <div className="gap-2 flex items-center">
+           <CSVInput />
             <Button
               variant="link"
               onClick={() =>

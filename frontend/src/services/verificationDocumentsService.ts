@@ -9,7 +9,7 @@ interface DocumentFiles {
   releveNotes: File | null;
 }
 
-const API_BASE = 'http://localhost:8000'
+const API_BASE = 'http://192.168.1.64:8000'
 
 
 export function useVerificationDocumentsService() {

@@ -3,14 +3,14 @@ from sqlalchemy.orm import Session
 from app.db import get_db
 from app.models.student import Student
 from app.schemas.student import StudentCreate, StudentOut , StudentListOut
-
+from sqlalchemy import or_
 
 router = APIRouter()
 
 @router.post("/", response_model=StudentOut)
 def create_student(student: StudentCreate, db: Session = Depends(get_db)):
     db_student = Student(**student.model_dump())
-    existsCheck = db.query(Student).filter(Student.cne == student.cne or Student.email == student.email or Student.apogee == student.apogee).first()
+    existsCheck = db.query(Student).filter(or_(Student.cne == student.cne, Student.email == student.email, Student.apogee == student.apogee)).first()
     if existsCheck:
         raise HTTPException(status_code=400, detail="Student with this CNE, email or Apogee already exists")
     db.add(db_student)

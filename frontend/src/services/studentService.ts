@@ -2,7 +2,7 @@ import {studentSchemaOut , studentSchemaCreate} from "@/schemas/studentSchemas"
 import type z from "zod"
 import { useAuth } from "@clerk/clerk-react"
 
-const API_BASE = 'http://192.168.1.58:8000'
+const API_BASE = 'http://localhost:8000'
 
 
 export function useStudentService() {

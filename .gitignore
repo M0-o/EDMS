@@ -49,3 +49,4 @@ backend/alembic/versions/*.pyc
 *.db
 uploads
 internshipReport.md
+*.tex

@@ -43,4 +43,4 @@ class Document(Base):
     @property
     def download_url(self) -> str:
     # this assumes you mounted StaticFiles at "/uploads" pointing at your "uploads/" folder
-        return f"http://192.168.1.58:8000/uploads/{self.file_path}"
+        return f"http://localhost:8000/uploads/{self.file_path}"
